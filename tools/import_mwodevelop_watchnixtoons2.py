@@ -34,6 +34,29 @@ def _git_bytes(commit, path):
     return result.stdout
 
 
+def _ensure_commit(repository, commit):
+    exists = subprocess.run(
+        ["git", "-C", str(ROOT), "cat-file", "-e", "%s^{commit}" % commit],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    )
+    if exists.returncode == 0:
+        return
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            str(ROOT),
+            "fetch",
+            "--no-tags",
+            repository.rstrip("/") + ".git",
+            commit,
+        ],
+        check=True,
+    )
+
+
 def _extract_safe(payload, destination, expected_root):
     total = 0
     count = 0
@@ -118,6 +141,7 @@ def _inventory(tree, transformed, patched, overlays):
 def rebuild(output):
     state = json.loads(STATE.read_text(encoding="utf-8"))
     transform = json.loads(TRANSFORM.read_text(encoding="utf-8"))
+    _ensure_commit(state["repository"], state["commit"])
     archive = _git_bytes(state["commit"], state["archive"])
     if hashlib.sha256(archive).hexdigest() != state["archive_sha256"]:
         raise ValueError("upstream archive SHA-256 mismatch")
