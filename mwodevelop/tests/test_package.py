@@ -17,7 +17,7 @@ class PackageTests(unittest.TestCase):
 
     def test_identity_and_provenance_are_downstream_specific(self):
         self.assertEqual(self.addon.attrib["id"], ADDON_ID)
-        self.assertEqual(self.addon.attrib["version"], "0.25.1")
+        self.assertEqual(self.addon.attrib["version"], "0.25.2")
         self.assertIn("mwoDevelop", self.addon.attrib["name"])
 
         metadata = self.addon.find("extension[@point='xbmc.addon.metadata']")
@@ -37,6 +37,10 @@ class PackageTests(unittest.TestCase):
         self.assertIn("script.module.requests", imports)
         self.assertIn("script.module.six", imports)
         self.assertIn("inputstream.adaptive", imports)
+        adaptive = self.addon.find(
+            "./requires/import[@addon='inputstream.adaptive']"
+        )
+        self.assertEqual(adaptive.attrib.get("optional"), "true")
 
     def test_settings_actions_target_this_addon(self):
         settings = ET.parse(ADDON / "resources/settings.xml").getroot()
@@ -73,6 +77,10 @@ class PackageTests(unittest.TestCase):
         self.assertNotIn("html.find(b'jw.onError')", plugin_source)
         self.assertIn("html.find('jw.onError')", plugin_source)
         self.assertIn("pair.split('=', 1)", network_source)
+        self.assertIn(
+            "System.HasAddon(inputstream.adaptive)",
+            plugin_source,
+        )
 
 
 if __name__ == "__main__":

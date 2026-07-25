@@ -1642,24 +1642,30 @@ def actionResolve(params):
             item.setContentLookup(False)
             item.setMimeType('application/x-mpegURL')
 
-            if KODI_VERSION < 19:
-                item.setProperty('inputstreamaddon', 'inputstream.adaptive')
-            else:
-                item.setProperty('inputstream', 'inputstream.adaptive')
+            # InputStream Adaptive is a platform-specific binary. Some Android
+            # repositories expose a package for a different ABI; making it a
+            # hard dependency then prevents this add-on from installing at all.
+            # Kodi can play HLS natively, so only opt into ISA when the matching
+            # binary is already installed.
+            if xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)'):
+                if KODI_VERSION < 19:
+                    item.setProperty('inputstreamaddon', 'inputstream.adaptive')
+                else:
+                    item.setProperty('inputstream', 'inputstream.adaptive')
 
-            item.setProperty('inputstream.adaptive.stream_headers', '&'.join(key+'='+urllib_parse.quote_plus(val) for key, val in MEDIA_HEADERS.items()))
-            item.setProperty('inputstream.adaptive.stream_params', '&'.join(key+'='+urllib_parse.quote_plus(val) for key, val in MEDIA_HEADERS.items()))
-            item.setProperty('inputstream.adaptive.manifest_headers', '&'.join(key+'='+urllib_parse.quote_plus(val) for key, val in MEDIA_HEADERS.items()))
+                item.setProperty('inputstream.adaptive.stream_headers', '&'.join(key+'='+urllib_parse.quote_plus(val) for key, val in MEDIA_HEADERS.items()))
+                item.setProperty('inputstream.adaptive.stream_params', '&'.join(key+'='+urllib_parse.quote_plus(val) for key, val in MEDIA_HEADERS.items()))
+                item.setProperty('inputstream.adaptive.manifest_headers', '&'.join(key+'='+urllib_parse.quote_plus(val) for key, val in MEDIA_HEADERS.items()))
 
-            if KODI_VERSION < 22:
-                item.setProperty('inputstream.adaptive.manifest_type', 'hls')
-            item.setProperty('inputstream.adaptive.original_audio_language', 'en')
+                if KODI_VERSION < 22:
+                    item.setProperty('inputstream.adaptive.manifest_type', 'hls')
+                item.setProperty('inputstream.adaptive.original_audio_language', 'en')
 
-            if PLAYBACK_METHOD == '0':
-                item.setProperty('inputstream.adaptive.stream_selection_type', 'ask-quality')
-            else:
-                item.setProperty('inputstream.adaptive.stream_selection_type', 'adaptive')
-            #item.setProperty('inputstream.adaptive.config', '{"ssl_verify_peer":false}')
+                if PLAYBACK_METHOD == '0':
+                    item.setProperty('inputstream.adaptive.stream_selection_type', 'ask-quality')
+                else:
+                    item.setProperty('inputstream.adaptive.stream_selection_type', 'adaptive')
+                #item.setProperty('inputstream.adaptive.config', '{"ssl_verify_peer":false}')
         else:
 
             MEDIA_HEADERS[ 'Referer' ] = BASEURL + '/'
