@@ -24,6 +24,8 @@ distributed under GPL-3.0-only.
   `plugin.video.watchnixtoons2` ID;
 - the fallback JWPlayer resolver uses Python 3 text consistently;
 - signed cookie values containing `=` are parsed safely;
+- InputStream Adaptive is optional and HLS falls back to Kodi's native player
+  when a compatible platform binary is unavailable;
 - explicit Kodi 19+ Python dependency;
 - source and license metadata;
 - package checks under `tests/`.

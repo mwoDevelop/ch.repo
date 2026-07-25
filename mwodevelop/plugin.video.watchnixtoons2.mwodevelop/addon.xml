@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.watchnixtoons2.mwodevelop" name="WatchNixtoons2 (mwoDevelop)" version="0.25.1" provider-name="WNT2 contributors, mwoDevelop">
+<addon id="plugin.video.watchnixtoons2.mwodevelop" name="WatchNixtoons2 (mwoDevelop)" version="0.25.2" provider-name="WNT2 contributors, mwoDevelop">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.requests"/>
         <import addon="script.module.six"/>
-        <import addon="inputstream.adaptive"/>
+        <import addon="inputstream.adaptive" optional="true"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
@@ -27,6 +27,10 @@ This build is maintained in an isolated downstream subtree by mwoDevelop.
         <license>GPL-3.0-only</license>
         <source>https://github.com/mwoDevelop/ch.repo</source>
         <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
+
+[B]0.25.2[/B]
+- Do not block installation when a compatible InputStream Adaptive binary is unavailable
+- Fall back to Kodi's native HLS player when InputStream Adaptive is not installed
 
 [B]0.25.1[/B]
 - Isolated mwoDevelop package with its own add-on ID
