@@ -1,0 +1,162 @@
+{
+  "files": {
+    "LICENSE": {
+      "kind": "overlay",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "size": 35149
+    },
+    "addon.xml": {
+      "kind": "transform",
+      "sha256": "f41d65c9f3b10e6efca7f019adf40c83c6cae583169c5bfbb0f633ac3a6b176c",
+      "size": 4777
+    },
+    "default.py": {
+      "kind": "upstream",
+      "sha256": "4900f135eb63095bc29fbdb1c573ec647ffd4b37ac6f9eaa91f43d8f517ba0ce",
+      "size": 87
+    },
+    "fanart.jpg": {
+      "kind": "upstream",
+      "sha256": "0bec615eb4118bb3b6306fd41c816a5ab5c116705c4881c1fd5fe211ab0f6fc8",
+      "size": 302608
+    },
+    "icon.png": {
+      "kind": "upstream",
+      "sha256": "bfa9d7a7560012e866128bb2ecc5e608949868b4f45aea92efdbc46161a244d6",
+      "size": 41825
+    },
+    "lib/__init__.py": {
+      "kind": "upstream",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    "lib/common.py": {
+      "kind": "transform",
+      "sha256": "5d2953373302bb9883971ce5f4138ee652896ace39700de71aeadda37f68ca2e",
+      "size": 6328
+    },
+    "lib/constants.py": {
+      "kind": "transform",
+      "sha256": "a61fa6b39d1808fb904200b9647b78b78fed97b613e9660796674652307fdea6",
+      "size": 3345
+    },
+    "lib/integration/__init__.py": {
+      "kind": "upstream",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    "lib/integration/trakt.py": {
+      "kind": "upstream",
+      "sha256": "d1347597af6cfc397edeb26b4a90242b4e126925a0390d6c7a39f55a29791765",
+      "size": 8010
+    },
+    "lib/integration/trakt_actions.py": {
+      "kind": "upstream",
+      "sha256": "83815984e58def26e82c9340cd1f8ca017055d40153dbf53f1cc971c3d5ef9a5",
+      "size": 3350
+    },
+    "lib/network.py": {
+      "kind": "patch",
+      "sha256": "5ad7de83122cf2e95cc8ea3d3689f950763fde2e6cfa5990aef8b94897df62ed",
+      "size": 3222
+    },
+    "lib/plugin.py": {
+      "kind": "patch",
+      "sha256": "0e8e2c34d552791c6de996994f7c063a51d7d7b6fa0ded87c9a4ce00979e7b1d",
+      "size": 70329
+    },
+    "lib/recently_watched.py": {
+      "kind": "upstream",
+      "sha256": "9185ecaaf0e76f028993d9f627c8f6b9ffaa7a97f94de4323fcf90f1b5e723c3",
+      "size": 1702
+    },
+    "lib/sites/__init__.py": {
+      "kind": "upstream",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    "lib/sites/wcoflix.py": {
+      "kind": "upstream",
+      "sha256": "ea8ed9276da6b20c5682fdf5f1b78ab2378e2061e1812dff500ffe233b70bdbb",
+      "size": 2277
+    },
+    "lib/sites/wcoforever.py": {
+      "kind": "transform",
+      "sha256": "e9bae18ca069d519c83ce60477aa2c81919a44e0165588c74a8ea5b46b232f09",
+      "size": 2287
+    },
+    "lib/sites/wcostream.py": {
+      "kind": "upstream",
+      "sha256": "e63b80742bbb9c976ecf5670d22a5ce6695d73be31832b8d8762a7c65d67fad0",
+      "size": 3586
+    },
+    "resources/data/thumbnail/cartoon-list.json": {
+      "kind": "upstream",
+      "sha256": "d6c3b1cdd914717ffe21ba9a039e7b2412095b6c2bb6c6907e72b363e97f5500",
+      "size": 145823
+    },
+    "resources/data/thumbnail/dubbed-anime-list.json": {
+      "kind": "upstream",
+      "sha256": "b74b916c0603eacdbff8d3647068598be7943f1157a4f2b36c33c8056dbd56cb",
+      "size": 107965
+    },
+    "resources/data/thumbnail/movie-list.json": {
+      "kind": "upstream",
+      "sha256": "ae060dbf1968655cdbc38b3a87ac008044a49406e42e7f3829b2c4928586d531",
+      "size": 224560
+    },
+    "resources/data/thumbnail/ova-list.json": {
+      "kind": "upstream",
+      "sha256": "744c788b506fbeda4b70dacdb9be5f8c5e5a36af79eb8ae5d2cb28df611ab838",
+      "size": 91448
+    },
+    "resources/data/thumbnail/subbed-anime-list.json": {
+      "kind": "upstream",
+      "sha256": "fe7147bb7c029863d6aaff02cebf9493c0e6f3017fad456c21e004c7c647c236",
+      "size": 190611
+    },
+    "resources/language/resource.language.en_gb/strings.po": {
+      "kind": "transform",
+      "sha256": "63ddc3e9e5d941b0225fee6014672d43d00ca9efcf965667955d38465b0f43b8",
+      "size": 2327
+    },
+    "resources/media/trakt_icon.png": {
+      "kind": "upstream",
+      "sha256": "1fa1883e53ba4ea079f184cacff3d1d5704371ff220de954a0dd93a44286f9ef",
+      "size": 11954
+    },
+    "resources/settings.xml": {
+      "kind": "transform",
+      "sha256": "b550ffe2c9b0cec0a300e8fb6718d8a476d6ba76a3111562d45dd7c4b1b5e386",
+      "size": 2713
+    },
+    "screenshot1.jpg": {
+      "kind": "upstream",
+      "sha256": "70986b71a12dda7e828bd199999331edc73f877f022321b97f221812f66ba82b",
+      "size": 284730
+    },
+    "screenshot2.png": {
+      "kind": "upstream",
+      "sha256": "4d19b38f166c058703c589ab8f7a1f9c148b8386ac765d991e51094ebbee0e4e",
+      "size": 686400
+    },
+    "screenshot3.jpg": {
+      "kind": "upstream",
+      "sha256": "91cae12ac204562b3a5d314bb6216dd32fb5d9aeda47554a3475b6ece237837c",
+      "size": 160345
+    },
+    "screenshot4.jpg": {
+      "kind": "upstream",
+      "sha256": "f23a53208d467bbf7fc16124eb2cd68e315441f3f7920df98ee35e3a93d61e9f",
+      "size": 137644
+    }
+  },
+  "schema": 1,
+  "upstream": {
+    "archive": "plugin.video.watchnixtoons2.kodi19/plugin.video.watchnixtoons2.kodi19-0.25.zip",
+    "archive_sha256": "16afeacfc0004bac69f13280d1893232ba93ea1655fe812f737677ec30a68817",
+    "commit": "37cdab938622bf0c205fe28c68057c5b2ccdde67",
+    "files": 39,
+    "uncompressed_bytes": 2498677
+  }
+}

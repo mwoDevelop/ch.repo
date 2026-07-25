@@ -82,6 +82,20 @@ class PackageTests(unittest.TestCase):
             plugin_source,
         )
 
+    def test_import_is_reproducible(self):
+        import subprocess
+        import sys
+
+        subprocess.run(
+            [
+                sys.executable,
+                str(ROOT.parent / "tools" / "import_mwodevelop_watchnixtoons2.py"),
+                "--check",
+            ],
+            check=True,
+            stdout=subprocess.DEVNULL,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

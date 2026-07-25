@@ -1,6 +1,6 @@
 # WatchNixtoons2 (mwoDevelop)
 
-This subtree contains the source used to build
+This subtree contains the reproducible source used to build
 `plugin.video.watchnixtoons2.mwodevelop`. It is intentionally separate from
 the upstream repository catalogue so upstream updates can be merged without
 mixing downstream changes into the original packages.
@@ -32,15 +32,17 @@ distributed under GPL-3.0-only.
 
 ## Updating
 
-1. Merge or fetch the latest upstream `master`.
-2. Select a new upstream WatchNixtoons2 release and verify its archive digest.
-3. Update the runtime files under
-   `plugin.video.watchnixtoons2.mwodevelop`, preserving the downstream changes
-   listed above.
-4. Update `upstream.json`, bump the downstream version and run:
+1. Let the central `mwoDevelop/kodi` discovery report the immutable upstream
+   commit, release archive and digest.
+2. Review the upstream license and update `upstream.json`.
+3. Adjust only the declarative identity transforms or the ordered patch series
+   when the new upstream tree requires it.
+4. Bump the downstream version and verify byte-for-byte reconstruction:
 
    ```bash
+   python3 tools/import_mwodevelop_watchnixtoons2.py --check
    python3 -m unittest discover -s mwodevelop/tests -v
    ```
 
-5. Publish the exact fork commit through `mwoDevelop/kodi` testing first.
+5. Review `import-manifest.json`, then publish the exact fork commit through
+   `mwoDevelop/kodi` testing first.

@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "upstream_root": "plugin.video.watchnixtoons2.kodi19",
+  "downstream_root": "plugin.video.watchnixtoons2.mwodevelop",
+  "downstream_version": "0.25.2",
+  "text_replacements": {
+    "addon.xml": [
+      ["<addon id=\"plugin.video.watchnixtoons2.kodi19\" name=\"WatchNixtoons2\" version=\"0.25\" provider-name=\"WNT2\">", "<addon id=\"plugin.video.watchnixtoons2.mwodevelop\" name=\"WatchNixtoons2 (mwoDevelop)\" version=\"0.25.2\" provider-name=\"WNT2 contributors, mwoDevelop\">"],
+      ["    <requires>\n", "    <requires>\n        <import addon=\"xbmc.python\" version=\"3.0.0\"/>\n"],
+      ["        <import addon=\"inputstream.adaptive\"/>", "        <import addon=\"inputstream.adaptive\" optional=\"true\"/>"],
+      ["        <summary lang=\"en\">WatchNixtoons2</summary>", "        <summary lang=\"en\">WatchNixtoons2 maintained by mwoDevelop</summary>"],
+      ["Random updates by lolage.", "Random updates by lolage.\nThis build is maintained in an isolated downstream subtree by mwoDevelop."],
+      ["        <platform lang=\"en\">all</platform>", "        <platform>all</platform>\n        <license>GPL-3.0-only</license>\n        <source>https://github.com/mwoDevelop/ch.repo</source>"],
+      ["        <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime\n", "        <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime\n\n[B]0.25.2[/B]\n- Do not block installation when a compatible InputStream Adaptive binary is unavailable\n- Fall back to Kodi's native HLS player when InputStream Adaptive is not installed\n\n[B]0.25.1[/B]\n- Isolated mwoDevelop package with its own add-on ID\n- Fixed settings actions still targeting the legacy add-on ID\n- Fixed the Python 3 JWPlayer fallback resolver and signed-cookie parsing\n- Added explicit Kodi 19+ Python dependency and source/license metadata\n"]
+    ],
+    "lib/common.py": [
+      ["WatchNixtoons2 >", "WatchNixtoons2 (mwoDevelop) >"]
+    ],
+    "lib/constants.py": [
+      ["PLUGIN_TITLE = 'WatchNixtoons2'", "PLUGIN_TITLE = 'WatchNixtoons2 (mwoDevelop)'"]
+    ],
+    "resources/settings.xml": [
+      ["plugin://plugin.video.watchnixtoons2/", "plugin://plugin.video.watchnixtoons2.mwodevelop/"],
+      ["</settings>", "</settings>\n"]
+    ],
+    "resources/language/resource.language.en_gb/strings.po": [
+      ["# Addon id: plugin.video.watchnixtoons2", "# Addon id: plugin.video.watchnixtoons2.mwodevelop"],
+      ["msgstr \"\"\n\n\n\n", "msgstr \"\"\n"]
+    ],
+    "lib/sites/wcoforever.py": [
+      ["        'regex': '''href=\\\"([^\\\"]+)\\\"\\s*class=\\\"genre-buton\\\">\\s*<span(?:[^>]+)>(.*?)</''',", "        'regex': r'''href=\\\"([^\\\"]+)\\\"\\s*class=\\\"genre-buton\\\">\\s*<span(?:[^>]+)>(.*?)</''',"]
+    ]
+  },
+  "overlay_files": {},
+  "repository_files": {
+    "LICENSE": "LICENSE"
+  }
+}
