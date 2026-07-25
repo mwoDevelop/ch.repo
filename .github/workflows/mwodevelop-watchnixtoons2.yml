@@ -1,0 +1,26 @@
+name: mwoDevelop WatchNixtoons2
+
+on:
+  push:
+    paths:
+      - "mwodevelop/**"
+      - ".github/workflows/mwodevelop-watchnixtoons2.yml"
+  pull_request:
+    paths:
+      - "mwodevelop/**"
+      - ".github/workflows/mwodevelop-watchnixtoons2.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate downstream package
+        run: python -m unittest discover -s mwodevelop/tests -v
