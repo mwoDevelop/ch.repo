@@ -117,7 +117,7 @@ jobs:
           if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH" &&
              git log -1 --format=%B "refs/remotes/origin/$BRANCH" |
                grep -Fq "Candidate-ID: $CANDIDATE_ID"; then
-            git checkout "$BRANCH"
+            echo "Review branch already contains candidate $CANDIDATE_ID"
           else
             git checkout -B "$BRANCH"
             git add \
@@ -131,7 +131,9 @@ jobs:
             git commit -m "Update WatchNixtoons2 to $DOWNSTREAM_VERSION" \
               -m "Upstream: $UPSTREAM_VERSION" \
               -m "Candidate-ID: $CANDIDATE_ID"
-            remote_sha="$(git rev-parse "refs/remotes/origin/$BRANCH" 2>/dev/null || true)"
+            remote_sha="$(
+              git show-ref --hash "refs/remotes/origin/$BRANCH" 2>/dev/null || true
+            )"
             if [ -n "$remote_sha" ]; then
               git push origin "HEAD:refs/heads/$BRANCH" \
                 "--force-with-lease=refs/heads/$BRANCH:$remote_sha"
