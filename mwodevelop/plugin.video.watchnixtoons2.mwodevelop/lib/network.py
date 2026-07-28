@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import ssl
+import json
 from time import time, sleep
 
 import requests
@@ -59,8 +60,6 @@ def request_helper(url, data=None, extra_headers=None):
     if extra_headers:
         my_headers.update(extra_headers)
 
-    # At the moment it's a single response cookie, "__cfduid".
-    # Other cookies are set w/ Javascript by ads.
     cookie_property = getRawWindowProperty(PROPERTY_SESSION_COOKIE)
     if cookie_property:
         # Cookie values can legally contain "=" (for example signed tokens).
@@ -71,11 +70,20 @@ def request_helper(url, data=None, extra_headers=None):
     uri = urllib_parse.urlparse(url)
     domain = uri.scheme + '://' + uri.netloc
 
-    start_time = time()
+    request_times = ADDON.getSetting('requestTimes')
+    if request_times:
+        request_times = json.loads( request_times )
+    else:
+        request_times = {}
+
+    if request_times.get( uri.netloc ):
+        elapsed = time() - request_times[ uri.netloc ]
+        if elapsed < 1.5:
+            sleep(1.5 - elapsed)
 
     status = 0
     i = 0
-    while status != 200 and i < 2:
+    while status not in [200, 204] and i < 2:
         if data:
             response = rqs.post(
                 url, data=data, headers=my_headers, verify=False, cookies=cookie_dict, timeout=10
@@ -86,20 +94,20 @@ def request_helper(url, data=None, extra_headers=None):
             )
 
         status = response.status_code
-        if status != 200:
+        if status not in [200, 204]:
             if status == 403 and response.headers.get('server', '') == 'cloudflare':
                 rqs.mount(domain, tls_adapters[i])
             i += 1
 
     # Store the session cookie(s), if any.
-    if not cookie_property and response.cookies:
+    if response.cookies:
         setRawWindowProperty(
             PROPERTY_SESSION_COOKIE,
             '; '.join(pair[0]+'='+pair[1] for pair in response.cookies.get_dict().items())
         )
 
-    elapsed = time() - start_time
-    if elapsed < 1.5:
-        sleep(1.5 - elapsed)
+    # set new request time
+    request_times[ uri.netloc ] = time()
+    ADDON.setSetting('requestTimes', json.dumps( request_times ))
 
     return response

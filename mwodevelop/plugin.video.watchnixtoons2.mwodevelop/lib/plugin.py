@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
-import json
 import six
-import uuid
-import time
 
 from itertools import chain
 from six.moves import urllib_parse
@@ -1430,13 +1427,6 @@ def actionResolve(params):
             # User cancelled the chapter selection.
             return
 
-    # method for .m3u8
-    elif '"vjs_iframe"' in content:
-
-        xbmc_debug( 'm3u8 Detected' )
-        urls['embed'] = re.search(r'<iframe id=\"(?:[a-zA-Z0-9-]+)\" class=\"vjs_iframe\" rel=\"nofollow\" src=\"([^\"]+)\"', content, re.DOTALL).group(1)
-        flags['m3u8'] = True
-
     elif 'uploads0" src=' in content:
 
         urls['embed'] = re.search(r'<iframe\s*id=\"(?:[a-zA-Z]+)uploads(?:[0-9]+)\"\s*src=\"([^\"]+)\"', content, re.DOTALL).group(1)
@@ -1469,31 +1459,8 @@ def actionResolve(params):
 
         if 'inc/embed/index.php' in urls['embed']:
 
-            flag = '__abd_' + uuid.uuid4().hex[:8]
-            n1 = request_helper(
-                'https://embed.wcostream.com/assets/ads/advertisement.js?flag=' + flag + '&_=' + str( int( time.time() * 1000 )  ),
-                data=None,
-                extra_headers = {
-                    'Accept': '*/*',
-                    'Referer': urls['embed'],
-                }
-            )
+            urls['embed'] = urls['embed'].replace( 'inc/embed/index.php', 'inc/embed/video-js-new.php' )
 
-            # get pid from url
-            pid = re.search(r'&pid\=([0-9]+)', urls['embed'])
-            n_val = uuid.uuid4().hex
-            # register nonce value
-            n2 = request_helper(
-                'https://embed.wcostream.com/ad-verify',
-                data = json.dumps({'nonce':n_val, 'status':'clear', 'id': pid.group(1)}),
-                extra_headers = {
-                    'Content-Type': 'application/json',
-                    'Referer': urls['embed'],
-                }
-            )
-
-            urls['embed'] = urls['embed'].replace( 'inc/embed/index.php', 'inc/embed/video-js-old.php' ) + '&n=' + n_val
-            time.sleep(5)
 
         # Request the embedded player page.
         r2 = request_helper(
@@ -1521,7 +1488,7 @@ def actionResolve(params):
 
         if 'getRedirectedUrl(videoUrl)' in html:
             source_url =  re.search(r'\$\.getJSON\(\"([^\"]+)\"', html, re.DOTALL).group(1)
-            source_url = "https://embed.wcostream.com/" + source_url + "&json"
+            source_url = EMBED_URL + '/' + source_url + "&json"
         else:
             source_url = re.search(r'"(/inc/embed/getvidlink[^"]+)', html, re.DOTALL).group(1)
             source_url = BASEURL + source_url
@@ -1769,6 +1736,7 @@ def thumbnail_domains_get():
     """
 
     return (
+        'cdn.animationexplorer.com',
         'cdn.animationexplore.com',
     )
 
