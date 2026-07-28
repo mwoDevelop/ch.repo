@@ -122,7 +122,15 @@ def discover(root=ROOT, repository=None, branch="master"):
         raise ValueError("upstream branch did not resolve to an immutable commit")
     observed_commit = fields[0]
     accepted_commit = state["commit"]
-    if observed_commit != accepted_commit:
+    commit_present = _run(
+        "git",
+        "cat-file",
+        "-e",
+        observed_commit + "^{commit}",
+        cwd=root,
+        check=False,
+    ).returncode == 0
+    if not commit_present:
         _run(
             "git",
             "fetch",
@@ -131,6 +139,7 @@ def discover(root=ROOT, repository=None, branch="master"):
             observed_commit,
             cwd=root,
         )
+    if observed_commit != accepted_commit:
         ancestry = _run(
             "git",
             "merge-base",
