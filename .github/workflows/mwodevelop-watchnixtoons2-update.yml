@@ -87,6 +87,7 @@ jobs:
     if: needs.prepare.outputs.action == 'prepare'
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       contents: write
       pull-requests: write
     steps:
@@ -113,6 +114,7 @@ jobs:
         run: |
           git config user.name "mwoDevelop update bot"
           git config user.email "actions@users.noreply.github.com"
+          branch_updated=false
           git fetch origin "$BRANCH:refs/remotes/origin/$BRANCH" || true
           if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH" &&
              git log -1 --format=%B "refs/remotes/origin/$BRANCH" |
@@ -140,6 +142,7 @@ jobs:
             else
               git push origin "HEAD:refs/heads/$BRANCH"
             fi
+            branch_updated=true
           fi
           body_file="$(mktemp)"
           {
@@ -167,4 +170,7 @@ jobs:
               --head "$BRANCH" \
               --title "Update WatchNixtoons2 to $DOWNSTREAM_VERSION" \
               --body-file "$body_file"
+          fi
+          if [ "$branch_updated" = true ]; then
+            gh workflow run mwodevelop-watchnixtoons2.yml --ref "$BRANCH"
           fi
