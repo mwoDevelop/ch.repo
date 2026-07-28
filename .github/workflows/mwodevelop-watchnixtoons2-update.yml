@@ -1,0 +1,168 @@
+name: propose WatchNixtoons2 upstream update
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "35 4 * * *"
+
+concurrency:
+  group: mwodevelop-watchnixtoons2-update
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      action: ${{ steps.discovery.outputs.action }}
+      base_commit: ${{ steps.discovery.outputs.base_commit }}
+      candidate_id: ${{ steps.candidate.outputs.candidate_id }}
+      downstream_version: ${{ steps.candidate.outputs.downstream_version }}
+      upstream_version: ${{ steps.discovery.outputs.upstream_version }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.11"
+      - name: Discover the current immutable upstream release
+        run: >-
+          python3 tools/prepare_mwodevelop_watchnixtoons2_update.py discover
+          --output discovery.json
+      - name: Export discovery result
+        id: discovery
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          discovery = json.loads(Path("discovery.json").read_text())
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a") as output:
+              output.write("action=%s\n" % discovery["action"])
+              output.write("base_commit=%s\n" % __import__("subprocess").check_output(
+                  ["git", "rev-parse", "HEAD"], text=True
+              ).strip())
+              output.write("upstream_version=%s\n" % discovery["observed"]["version"])
+          PY
+      - name: Prepare and test an isolated candidate
+        if: steps.discovery.outputs.action == 'prepare'
+        run: >-
+          python3 tools/prepare_mwodevelop_watchnixtoons2_update.py prepare
+          --discovery discovery.json
+          --output candidate
+      - name: Export candidate identity
+        if: steps.discovery.outputs.action == 'prepare'
+        id: candidate
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          candidate = json.loads(Path("candidate/candidate.json").read_text())
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a") as output:
+              output.write("candidate_id=%s\n" % candidate["candidate_id"])
+              output.write(
+                  "downstream_version=%s\n"
+                  % candidate["metadata"]["downstream_version"]
+              )
+          PY
+      - name: Upload the content-addressed candidate
+        if: steps.discovery.outputs.action == 'prepare'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: watchnixtoons2-candidate
+          path: candidate/
+          if-no-files-found: error
+          retention-days: 7
+
+  propose:
+    needs: prepare
+    if: needs.prepare.outputs.action == 'prepare'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.prepare.outputs.base_commit }}
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: watchnixtoons2-candidate
+          path: candidate
+      - name: Verify and apply without executing candidate code
+        run: >-
+          python3 tools/prepare_mwodevelop_watchnixtoons2_update.py apply
+          --bundle candidate
+          --checkout .
+      - name: Open or update the review branch
+        env:
+          BRANCH: automation/watchnixtoons2-upstream
+          CANDIDATE_ID: ${{ needs.prepare.outputs.candidate_id }}
+          DOWNSTREAM_VERSION: ${{ needs.prepare.outputs.downstream_version }}
+          UPSTREAM_VERSION: ${{ needs.prepare.outputs.upstream_version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "mwoDevelop update bot"
+          git config user.email "actions@users.noreply.github.com"
+          git fetch origin "$BRANCH:refs/remotes/origin/$BRANCH" || true
+          if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH" &&
+             git log -1 --format=%B "refs/remotes/origin/$BRANCH" |
+               grep -Fq "Candidate-ID: $CANDIDATE_ID"; then
+            git checkout "$BRANCH"
+          else
+            git checkout -B "$BRANCH"
+            git add \
+              mwodevelop/README.md \
+              mwodevelop/import-manifest.json \
+              mwodevelop/transforms/addon_identity.json \
+              mwodevelop/upstream.json \
+              mwodevelop/plugin.video.watchnixtoons2.mwodevelop
+            git diff --cached --quiet &&
+              { echo "Candidate produced no managed changes"; exit 1; }
+            git commit -m "Update WatchNixtoons2 to $DOWNSTREAM_VERSION" \
+              -m "Upstream: $UPSTREAM_VERSION" \
+              -m "Candidate-ID: $CANDIDATE_ID"
+            remote_sha="$(git rev-parse "refs/remotes/origin/$BRANCH" 2>/dev/null || true)"
+            if [ -n "$remote_sha" ]; then
+              git push origin "HEAD:refs/heads/$BRANCH" \
+                "--force-with-lease=refs/heads/$BRANCH:$remote_sha"
+            else
+              git push origin "HEAD:refs/heads/$BRANCH"
+            fi
+          fi
+          body_file="$(mktemp)"
+          {
+            echo "Automated, review-gated WatchNixtoons2 import."
+            echo
+            echo "- Upstream version: \`$UPSTREAM_VERSION\`"
+            echo "- Proposed downstream version: \`$DOWNSTREAM_VERSION\`"
+            echo "- Candidate ID: \`$CANDIDATE_ID\`"
+            echo
+            echo "The unprivileged preparation job rebuilt and tested the package."
+            echo "The writer job only verified and copied allowlisted candidate files."
+            echo "Merging this PR does not publish or promote the Kodi repository."
+          } > "$body_file"
+          number="$(
+            gh pr list --state open --head "$BRANCH" --json number \
+              --jq '.[0].number // empty'
+          )"
+          if [ -n "$number" ]; then
+            gh pr edit "$number" \
+              --title "Update WatchNixtoons2 to $DOWNSTREAM_VERSION" \
+              --body-file "$body_file"
+          else
+            gh pr create \
+              --base master \
+              --head "$BRANCH" \
+              --title "Update WatchNixtoons2 to $DOWNSTREAM_VERSION" \
+              --body-file "$body_file"
+          fi

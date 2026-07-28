@@ -4,11 +4,15 @@ on:
   push:
     paths:
       - "mwodevelop/**"
+      - "tools/prepare_mwodevelop_watchnixtoons2_update.py"
       - ".github/workflows/mwodevelop-watchnixtoons2.yml"
+      - ".github/workflows/mwodevelop-watchnixtoons2-update.yml"
   pull_request:
     paths:
       - "mwodevelop/**"
+      - "tools/prepare_mwodevelop_watchnixtoons2_update.py"
       - ".github/workflows/mwodevelop-watchnixtoons2.yml"
+      - ".github/workflows/mwodevelop-watchnixtoons2-update.yml"
   workflow_dispatch:
 
 permissions:
