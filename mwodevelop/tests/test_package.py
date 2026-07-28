@@ -14,10 +14,15 @@ ADDON_ID = "plugin.video.watchnixtoons2.mwodevelop"
 class PackageTests(unittest.TestCase):
     def setUp(self):
         self.addon = ET.parse(ADDON / "addon.xml").getroot()
+        self.transform = json.loads(
+            (ROOT / "transforms/addon_identity.json").read_text(encoding="utf-8")
+        )
 
     def test_identity_and_provenance_are_downstream_specific(self):
         self.assertEqual(self.addon.attrib["id"], ADDON_ID)
-        self.assertEqual(self.addon.attrib["version"], "0.25.2")
+        self.assertEqual(
+            self.addon.attrib["version"], self.transform["downstream_version"]
+        )
         self.assertIn("mwoDevelop", self.addon.attrib["name"])
 
         metadata = self.addon.find("extension[@point='xbmc.addon.metadata']")
@@ -25,7 +30,9 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(metadata.findtext("source"), "https://github.com/mwoDevelop/ch.repo")
 
         provenance = json.loads((ROOT / "upstream.json").read_text(encoding="utf-8"))
-        self.assertEqual(provenance["version"], "0.25")
+        identity_anchor = self.transform["text_replacements"]["addon.xml"][0][0]
+        upstream_version = ET.fromstring(identity_anchor + "</addon>").attrib["version"]
+        self.assertEqual(provenance["version"], upstream_version)
         self.assertEqual(len(provenance["archive_sha256"]), 64)
 
     def test_runtime_dependencies_are_declared(self):

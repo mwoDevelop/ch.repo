@@ -12,15 +12,6 @@
  
 --- a/lib/plugin.py
 +++ b/lib/plugin.py
-@@ -332,7 +332,7 @@
-         thumb = listData[0]
-         if thumb:
-             art_dict = {'icon': thumb, 'thumb': thumb, 'poster': thumb}
--        
-+
-         plot = listData[1]
- 
-         listItemFunc = makeListItemClean if ADDON.getSetting('cleanupEpisodes') == 'true' else makeListItem
 @@ -1578,7 +1578,9 @@
              for sourceMatch in stream_pattern.finditer(sources_block)
          ]
@@ -78,12 +69,3 @@
          else:
  
              MEDIA_HEADERS[ 'Referer' ] = BASEURL + '/'
-@@ -1770,7 +1778,7 @@
-         if thumb_id.startswith( 'tm-' ):
-             return TMDB_IMAGES_URL + '/t/p/w500/' + thumb_id.replace( 'tm-', '' ) + '.jpg'
-         return IMAGES_URL + '/catimg/' + thumb_id + '.jpg' + get_thumbnail_headers()
--    
-+
-     return ''
- 
- def solve_media_redirect(url, headers):

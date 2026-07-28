@@ -32,17 +32,24 @@ distributed under GPL-3.0-only.
 
 ## Updating
 
-1. Let the central `mwoDevelop/kodi` discovery report the immutable upstream
-   commit, release archive and digest.
-2. Review the upstream license and update `upstream.json`.
-3. Adjust only the declarative identity transforms or the ordered patch series
-   when the new upstream tree requires it.
-4. Bump the downstream version and verify byte-for-byte reconstruction:
+The scheduled `propose WatchNixtoons2 upstream update` workflow discovers the
+version declared by the current upstream `addon.xml` (it never selects an older
+ZIP by filename), verifies the matching archive and prepares a content-addressed
+candidate in a job without write permissions. A separate writer job can copy
+only the allowlisted `mwodevelop/` files and opens or updates a PR. It never
+merges the PR or publishes a Kodi repository release.
 
-   ```bash
-   python3 tools/import_mwodevelop_watchnixtoons2.py --check
-   python3 -m unittest discover -s mwodevelop/tests -v
-   ```
+For a local dry run:
 
-5. Review `import-manifest.json`, then publish the exact fork commit through
-   `mwoDevelop/kodi` testing first.
+```bash
+python3 tools/prepare_mwodevelop_watchnixtoons2_update.py discover \
+  --output discovery.json
+python3 tools/prepare_mwodevelop_watchnixtoons2_update.py prepare \
+  --discovery discovery.json --output candidate
+python3 tools/prepare_mwodevelop_watchnixtoons2_update.py verify \
+  --bundle candidate
+```
+
+After review, merge the component PR and publish the exact fork commit through
+`mwoDevelop/kodi` testing first. Stable promotion remains a separate manual
+decision.

@@ -97,13 +97,47 @@ def _apply_replacements(tree, replacements):
 
 def _apply_patches(tree):
     patched = set()
-    for name in SERIES.read_text(encoding="utf-8").splitlines():
-        name = name.strip()
-        if not name or name.startswith("#"):
+    for entry in SERIES.read_text(encoding="utf-8").splitlines():
+        entry = entry.strip()
+        if not entry or entry.startswith("#"):
             continue
+        optional = entry.startswith("optional ")
+        name = entry[len("optional ") :].strip() if optional else entry
         patch = MWO / "patches" / name
+        dry_run = subprocess.run(
+            [
+                "patch",
+                "--batch",
+                "--forward",
+                "--dry-run",
+                "--no-backup-if-mismatch",
+                "-p1",
+                "-i",
+                str(patch),
+            ],
+            cwd=tree,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            check=False,
+        )
+        if dry_run.returncode:
+            if optional:
+                continue
+            raise ValueError(
+                "required downstream patch does not apply: %s\n%s"
+                % (name, dry_run.stdout)
+            )
         subprocess.run(
-            ["patch", "--batch", "--forward", "-p1", "-i", str(patch)],
+            [
+                "patch",
+                "--batch",
+                "--forward",
+                "--no-backup-if-mismatch",
+                "-p1",
+                "-i",
+                str(patch),
+            ],
             cwd=tree,
             check=True,
         )
