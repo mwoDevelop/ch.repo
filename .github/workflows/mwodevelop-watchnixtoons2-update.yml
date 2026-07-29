@@ -22,6 +22,7 @@ jobs:
       base_commit: ${{ steps.discovery.outputs.base_commit }}
       candidate_id: ${{ steps.candidate.outputs.candidate_id }}
       downstream_version: ${{ steps.candidate.outputs.downstream_version }}
+      expected_tree: ${{ steps.candidate.outputs.expected_tree }}
       upstream_version: ${{ steps.discovery.outputs.upstream_version }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -72,6 +73,9 @@ jobs:
                   "downstream_version=%s\n"
                   % candidate["metadata"]["downstream_version"]
               )
+              output.write(
+                  "expected_tree=%s\n" % candidate["metadata"]["expected_tree"]
+              )
           PY
       - name: Upload the content-addressed candidate
         if: steps.discovery.outputs.action == 'prepare'
@@ -109,16 +113,24 @@ jobs:
           BRANCH: automation/watchnixtoons2-upstream
           CANDIDATE_ID: ${{ needs.prepare.outputs.candidate_id }}
           DOWNSTREAM_VERSION: ${{ needs.prepare.outputs.downstream_version }}
+          EXPECTED_TREE: ${{ needs.prepare.outputs.expected_tree }}
+          BASE_COMMIT: ${{ needs.prepare.outputs.base_commit }}
           UPSTREAM_VERSION: ${{ needs.prepare.outputs.upstream_version }}
           GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "mwoDevelop update bot"
-          git config user.email "actions@users.noreply.github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           branch_updated=false
           git fetch origin "$BRANCH:refs/remotes/origin/$BRANCH" || true
+          git fetch origin master
+          test "$(git rev-parse origin/master)" = "$BASE_COMMIT"
           if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH" &&
              git log -1 --format=%B "refs/remotes/origin/$BRANCH" |
                grep -Fq "Candidate-ID: $CANDIDATE_ID"; then
+            test "$(git show -s --format=%P "refs/remotes/origin/$BRANCH")" = "$BASE_COMMIT"
+            test "$(git show -s --format=%T "refs/remotes/origin/$BRANCH")" = "$EXPECTED_TREE"
+            test "$(git show -s --format=%ae "refs/remotes/origin/$BRANCH")" = \
+              "41898282+github-actions[bot]@users.noreply.github.com"
             echo "Review branch already contains candidate $CANDIDATE_ID"
           else
             git checkout -B "$BRANCH"
@@ -128,6 +140,7 @@ jobs:
               mwodevelop/transforms/addon_identity.json \
               mwodevelop/upstream.json \
               mwodevelop/plugin.video.watchnixtoons2.mwodevelop
+            test "$(git write-tree)" = "$EXPECTED_TREE"
             git diff --cached --quiet &&
               { echo "Candidate produced no managed changes"; exit 1; }
             git commit -m "Update WatchNixtoons2 to $DOWNSTREAM_VERSION" \
@@ -172,5 +185,20 @@ jobs:
               --body-file "$body_file"
           fi
           if [ "$branch_updated" = true ]; then
-            gh workflow run mwodevelop-watchnixtoons2.yml --ref "$BRANCH"
+            head_sha="$(git rev-parse HEAD)"
+          else
+            head_sha="$(git rev-parse "refs/remotes/origin/$BRANCH")"
           fi
+          gh workflow run mwodevelop-watchnixtoons2.yml --ref "$BRANCH"
+          found=false
+          for attempt in $(seq 1 15); do
+            run_head="$(gh run list --workflow mwodevelop-watchnixtoons2.yml \
+              --branch "$BRANCH" --event workflow_dispatch --limit 1 \
+              --json headSha --jq '.[0].headSha // empty')"
+            if [ "$run_head" = "$head_sha" ]; then
+              found=true
+              break
+            fi
+            sleep 2
+          done
+          test "$found" = true
