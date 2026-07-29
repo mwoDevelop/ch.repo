@@ -375,11 +375,20 @@ def prepare(discovery, output, root=ROOT):
                 target_file.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(source, target_file)
             shutil.copytree(worktree / ADDON, candidate_tree / ADDON)
+            _run(
+                "git",
+                "add",
+                *MANAGED_FILES,
+                ADDON,
+                cwd=worktree,
+            )
+            expected_tree = _run("git", "write-tree", cwd=worktree).stdout.strip()
             document = _build_bundle(
                 candidate_tree,
                 output,
                 {
                     "base_commit": base,
+                    "expected_tree": expected_tree,
                     "upstream": discovery["observed"],
                     "downstream_version": downstream_version,
                     "managed_addon": ADDON,
