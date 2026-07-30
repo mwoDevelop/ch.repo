@@ -81,7 +81,7 @@ jobs:
         if: steps.discovery.outputs.action == 'prepare'
         uses: mwoDevelop/kodi/.github/actions/upstream-malware-scan@28f29307987e277836cb610c944c120d60638ba4
         with:
-          candidate-path: candidate/tree
+          candidate-path: candidate
           candidate-id: ${{ steps.candidate.outputs.candidate_id }}
           output: security-report.json
       - name: Test the scanned content-addressed candidate
@@ -140,7 +140,7 @@ jobs:
           test "$(git -C "$control" rev-parse FETCH_HEAD)" = "$SECURITY_CONTROL_SHA"
           git -C "$control" checkout --detach FETCH_HEAD
           python "$control/tools/upstream_security_scan.py" verify \
-            --candidate candidate/tree \
+            --candidate candidate \
             --candidate-id "$CANDIDATE_ID" \
             --report security/security-report.json \
             --policy "$control/manifests/upstream-security.json"

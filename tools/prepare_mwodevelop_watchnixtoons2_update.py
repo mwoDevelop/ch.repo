@@ -379,6 +379,7 @@ def prepare(discovery, output, root=ROOT):
                     "managed_files": list(MANAGED_FILES),
                 },
             )
+            (Path(output) / "upstream-archive.zip").write_bytes(archive_payload)
         finally:
             _run(
                 "git",
@@ -446,6 +447,13 @@ def verify_bundle(bundle):
     if _inventory(bundle / "tree") != document.get("files"):
         raise ValueError("candidate tree inventory mismatch")
     metadata = document["metadata"]
+    upstream_digest = metadata.get("upstream", {}).get("archive_sha256")
+    if upstream_digest:
+        archive = bundle / "upstream-archive.zip"
+        if not archive.is_file() or archive.is_symlink():
+            raise ValueError("raw upstream archive is missing")
+        if _sha256(archive.read_bytes()) != upstream_digest:
+            raise ValueError("raw upstream archive digest mismatch")
     allowed_files = set(metadata["managed_files"])
     addon = metadata["managed_addon"].rstrip("/")
     for relative in document["files"]:

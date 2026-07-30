@@ -66,6 +66,32 @@ class UpdateCycleTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "inventory mismatch"):
                 UPDATE.verify_bundle(bundle)
 
+    def test_raw_upstream_archive_tampering_is_detected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            temporary = Path(temporary)
+            tree = temporary / "tree"
+            target = tree / UPDATE.MANAGED_FILES[0]
+            target.parent.mkdir(parents=True)
+            target.write_text("original\n")
+            archive = b"trusted raw upstream archive"
+            bundle = temporary / "bundle"
+            UPDATE._build_bundle(
+                tree,
+                bundle,
+                {
+                    "base_commit": "0" * 40,
+                    "upstream": {
+                        "archive_sha256": UPDATE._sha256(archive),
+                    },
+                    "downstream_version": "0.26.1",
+                    "managed_addon": UPDATE.ADDON,
+                    "managed_files": list(UPDATE.MANAGED_FILES),
+                },
+            )
+            (bundle / "upstream-archive.zip").write_bytes(archive + b"tampered")
+            with self.assertRaisesRegex(ValueError, "archive digest mismatch"):
+                UPDATE.verify_bundle(bundle)
+
     def test_prepare_never_executes_candidate_tests(self):
         source = inspect.getsource(UPDATE.prepare)
         self.assertNotIn('"unittest"', source)
