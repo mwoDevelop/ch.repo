@@ -79,7 +79,7 @@ jobs:
           PY
       - name: Scan exact candidate before executing tests
         if: steps.discovery.outputs.action == 'prepare'
-        uses: mwoDevelop/kodi/.github/actions/upstream-malware-scan@b3389b7d85ebee78a1757180676a5fe81ed13c9b
+        uses: mwoDevelop/kodi/.github/actions/upstream-malware-scan@28f29307987e277836cb610c944c120d60638ba4
         with:
           candidate-path: candidate/tree
           candidate-id: ${{ steps.candidate.outputs.candidate_id }}
@@ -130,7 +130,7 @@ jobs:
       - name: Verify scanner attestation against downloaded bytes
         env:
           CANDIDATE_ID: ${{ needs.prepare.outputs.candidate_id }}
-          SECURITY_CONTROL_SHA: b3389b7d85ebee78a1757180676a5fe81ed13c9b
+          SECURITY_CONTROL_SHA: 28f29307987e277836cb610c944c120d60638ba4
         run: |
           set -euo pipefail
           control="$RUNNER_TEMP/mwodevelop-security-control"

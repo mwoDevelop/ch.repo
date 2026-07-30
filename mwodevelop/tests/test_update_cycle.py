@@ -84,7 +84,7 @@ class UpdateCycleTests(unittest.TestCase):
         self.assertLess(scan, execute)
         self.assertIn(
             "mwoDevelop/kodi/.github/actions/upstream-malware-scan@"
-            "b3389b7d85ebee78a1757180676a5fe81ed13c9b",
+            "28f29307987e277836cb610c944c120d60638ba4",
             workflow,
         )
 
