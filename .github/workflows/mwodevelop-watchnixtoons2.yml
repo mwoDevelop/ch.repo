@@ -19,7 +19,25 @@ permissions:
   contents: read
 
 jobs:
+  malware-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - name: Export exact tracked head
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/candidate-tree"
+          git archive HEAD | tar -x -C "$RUNNER_TEMP/candidate-tree"
+      - name: Scan exact head before executing addon code
+        uses: mwoDevelop/kodi/.github/actions/upstream-malware-scan@28f29307987e277836cb610c944c120d60638ba4
+        with:
+          candidate-path: ${{ runner.temp }}/candidate-tree
+          output: ${{ runner.temp }}/security-report.json
+
   test:
+    needs: malware-scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4

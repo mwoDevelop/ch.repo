@@ -88,6 +88,17 @@ class UpdateCycleTests(unittest.TestCase):
             workflow,
         )
 
+    def test_exact_pr_head_is_scanned_before_downstream_tests(self):
+        workflow = (
+            ROOT / ".github/workflows/mwodevelop-watchnixtoons2.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("test:\n    needs: malware-scan", workflow)
+        self.assertIn("git archive HEAD", workflow)
+        self.assertIn(
+            "Scan exact head before executing addon code",
+            workflow,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
