@@ -1,4 +1,5 @@
 import importlib.util
+import inspect
 import json
 import tempfile
 import unittest
@@ -64,6 +65,28 @@ class UpdateCycleTests(unittest.TestCase):
             (bundle / "tree" / UPDATE.MANAGED_FILES[0]).write_text("tampered\n")
             with self.assertRaisesRegex(ValueError, "inventory mismatch"):
                 UPDATE.verify_bundle(bundle)
+
+    def test_prepare_never_executes_candidate_tests(self):
+        source = inspect.getsource(UPDATE.prepare)
+        self.assertNotIn('"unittest"', source)
+        self.assertNotIn('"--check"', source)
+
+    def test_tests_are_deferred_until_after_the_scanner_gate(self):
+        source = inspect.getsource(UPDATE.test_bundle)
+        self.assertIn('"unittest"', source)
+        self.assertIn('"--check"', source)
+        workflow = (
+            ROOT
+            / ".github/workflows/mwodevelop-watchnixtoons2-update.yml"
+        ).read_text(encoding="utf-8")
+        scan = workflow.index("Scan exact candidate before executing tests")
+        execute = workflow.index("Test the scanned content-addressed candidate")
+        self.assertLess(scan, execute)
+        self.assertIn(
+            "mwoDevelop/kodi/.github/actions/upstream-malware-scan@"
+            "b3389b7d85ebee78a1757180676a5fe81ed13c9b",
+            workflow,
+        )
 
 
 if __name__ == "__main__":

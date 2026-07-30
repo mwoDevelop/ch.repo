@@ -350,22 +350,6 @@ def prepare(discovery, output, root=ROOT):
             shutil.rmtree(target)
             shutil.copytree(generated, target)
             shutil.copyfile(manifest, worktree / "mwodevelop/import-manifest.json")
-            _run(
-                "python3",
-                "tools/import_mwodevelop_watchnixtoons2.py",
-                "--check",
-                cwd=worktree,
-            )
-            _run(
-                "python3",
-                "-m",
-                "unittest",
-                "discover",
-                "-s",
-                "mwodevelop/tests",
-                "-v",
-                cwd=worktree,
-            )
 
             candidate_tree = temporary / "candidate-tree"
             candidate_tree.mkdir()
@@ -402,6 +386,44 @@ def prepare(discovery, output, root=ROOT):
                 "remove",
                 "--force",
                 str(worktree),
+                cwd=root,
+                check=False,
+            )
+    return document
+
+
+def test_bundle(bundle, root=ROOT):
+    """Execute candidate-dependent checks only after the scanner gate."""
+    document = verify_bundle(bundle)
+    base = document["metadata"]["base_commit"]
+    with tempfile.TemporaryDirectory(prefix="watch-candidate-test-") as temporary:
+        checkout = Path(temporary) / "checkout"
+        _run("git", "worktree", "add", "--detach", str(checkout), base, cwd=root)
+        try:
+            apply_bundle(bundle, checkout)
+            _run(
+                "python3",
+                "tools/import_mwodevelop_watchnixtoons2.py",
+                "--check",
+                cwd=checkout,
+            )
+            _run(
+                "python3",
+                "-m",
+                "unittest",
+                "discover",
+                "-s",
+                "mwodevelop/tests",
+                "-v",
+                cwd=checkout,
+            )
+        finally:
+            _run(
+                "git",
+                "worktree",
+                "remove",
+                "--force",
+                str(checkout),
                 cwd=root,
                 check=False,
             )
@@ -460,6 +482,8 @@ def main():
     prepare_parser = subparsers.add_parser("prepare")
     prepare_parser.add_argument("--discovery", required=True)
     prepare_parser.add_argument("--output", required=True)
+    test_parser = subparsers.add_parser("test")
+    test_parser.add_argument("--bundle", required=True)
     verify_parser = subparsers.add_parser("verify")
     verify_parser.add_argument("--bundle", required=True)
     apply_parser = subparsers.add_parser("apply")
@@ -475,6 +499,8 @@ def main():
             json.loads(Path(args.discovery).read_text(encoding="utf-8")),
             args.output,
         )
+    elif args.command == "test":
+        result = test_bundle(args.bundle)
     elif args.command == "verify":
         result = verify_bundle(args.bundle)
     else:
