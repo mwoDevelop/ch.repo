@@ -119,7 +119,7 @@ class UpdateCycleTests(unittest.TestCase):
             ROOT / ".github/workflows/mwodevelop-watchnixtoons2.yml"
         ).read_text(encoding="utf-8")
         self.assertIn("test:\n    needs: malware-scan", workflow)
-        self.assertIn("git archive HEAD", workflow)
+        self.assertIn("git archive HEAD -- mwodevelop tools", workflow)
         self.assertIn(
             "Scan exact head before executing addon code",
             workflow,
