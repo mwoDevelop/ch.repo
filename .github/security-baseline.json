@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "findings": [
+    {
+      "engine": "semgrep",
+      "path": "mwodevelop/plugin.video.watchnixtoons2.mwodevelop/lib/network.py",
+      "rule": "mwodevelop.disable-tls-verification-globally",
+      "sha256": "9d936292447471cdb3310c076f5b41bc02140c11e4fe99450bafddf62316fcaa"
+    },
+    {
+      "engine": "semgrep",
+      "path": "tree/mwodevelop/plugin.video.watchnixtoons2.mwodevelop/lib/network.py",
+      "rule": "mwodevelop.disable-tls-verification-globally",
+      "sha256": "9d936292447471cdb3310c076f5b41bc02140c11e4fe99450bafddf62316fcaa"
+    },
+    {
+      "engine": "gitleaks",
+      "path": "mwodevelop/plugin.video.watchnixtoons2.mwodevelop/lib/integration/trakt.py",
+      "rule": "generic-api-key",
+      "sha256": "d1347597af6cfc397edeb26b4a90242b4e126925a0390d6c7a39f55a29791765"
+    },
+    {
+      "engine": "gitleaks",
+      "path": "tree/mwodevelop/plugin.video.watchnixtoons2.mwodevelop/lib/integration/trakt.py",
+      "rule": "generic-api-key",
+      "sha256": "d1347597af6cfc397edeb26b4a90242b4e126925a0390d6c7a39f55a29791765"
+    }
+  ]
+}

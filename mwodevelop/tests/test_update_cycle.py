@@ -1,3 +1,4 @@
+import hashlib
 import importlib.util
 import inspect
 import json
@@ -110,7 +111,7 @@ class UpdateCycleTests(unittest.TestCase):
         self.assertLess(scan, execute)
         self.assertIn(
             "mwoDevelop/kodi/.github/actions/upstream-malware-scan@"
-            "d7a1cca09e056fbbdebb2ba2d231e175eea7455b",
+            "8b4fe96708d1e2e64cf535e3726fa7a9a4a1adb6",
             workflow,
         )
 
@@ -124,6 +125,19 @@ class UpdateCycleTests(unittest.TestCase):
             "Scan exact head before executing addon code",
             workflow,
         )
+        self.assertIn("baseline: .github/security-baseline.json", workflow)
+
+    def test_security_baseline_is_bound_to_current_reviewed_bytes(self):
+        baseline = json.loads(
+            (ROOT / ".github/security-baseline.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(baseline["schema"], 1)
+        for item in baseline["findings"]:
+            relative = item["path"].removeprefix("tree/")
+            digest = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+            self.assertEqual(digest, item["sha256"])
 
 
 if __name__ == "__main__":

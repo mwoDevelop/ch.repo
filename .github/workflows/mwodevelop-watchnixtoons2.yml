@@ -32,8 +32,9 @@ jobs:
           git archive HEAD -- mwodevelop tools |
             tar -x -C "$RUNNER_TEMP/candidate-tree"
       - name: Scan exact head before executing addon code
-        uses: mwoDevelop/kodi/.github/actions/upstream-malware-scan@d7a1cca09e056fbbdebb2ba2d231e175eea7455b
+        uses: mwoDevelop/kodi/.github/actions/upstream-malware-scan@8b4fe96708d1e2e64cf535e3726fa7a9a4a1adb6
         with:
+          baseline: .github/security-baseline.json
           candidate-path: ${{ runner.temp }}/candidate-tree
           output: ${{ runner.temp }}/security-report.json
 
