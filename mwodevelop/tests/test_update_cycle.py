@@ -1,4 +1,6 @@
+import hashlib
 import importlib.util
+import inspect
 import json
 import tempfile
 import unittest
@@ -64,6 +66,78 @@ class UpdateCycleTests(unittest.TestCase):
             (bundle / "tree" / UPDATE.MANAGED_FILES[0]).write_text("tampered\n")
             with self.assertRaisesRegex(ValueError, "inventory mismatch"):
                 UPDATE.verify_bundle(bundle)
+
+    def test_raw_upstream_archive_tampering_is_detected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            temporary = Path(temporary)
+            tree = temporary / "tree"
+            target = tree / UPDATE.MANAGED_FILES[0]
+            target.parent.mkdir(parents=True)
+            target.write_text("original\n")
+            archive = b"trusted raw upstream archive"
+            bundle = temporary / "bundle"
+            UPDATE._build_bundle(
+                tree,
+                bundle,
+                {
+                    "base_commit": "0" * 40,
+                    "upstream": {
+                        "archive_sha256": UPDATE._sha256(archive),
+                    },
+                    "downstream_version": "0.26.1",
+                    "managed_addon": UPDATE.ADDON,
+                    "managed_files": list(UPDATE.MANAGED_FILES),
+                },
+            )
+            (bundle / "upstream-archive.zip").write_bytes(archive + b"tampered")
+            with self.assertRaisesRegex(ValueError, "archive digest mismatch"):
+                UPDATE.verify_bundle(bundle)
+
+    def test_prepare_never_executes_candidate_tests(self):
+        source = inspect.getsource(UPDATE.prepare)
+        self.assertNotIn('"unittest"', source)
+        self.assertNotIn('"--check"', source)
+
+    def test_tests_are_deferred_until_after_the_scanner_gate(self):
+        source = inspect.getsource(UPDATE.test_bundle)
+        self.assertIn('"unittest"', source)
+        self.assertIn('"--check"', source)
+        workflow = (
+            ROOT
+            / ".github/workflows/mwodevelop-watchnixtoons2-update.yml"
+        ).read_text(encoding="utf-8")
+        scan = workflow.index("Scan exact candidate before executing tests")
+        execute = workflow.index("Test the scanned content-addressed candidate")
+        self.assertLess(scan, execute)
+        self.assertIn(
+            "mwoDevelop/kodi/.github/actions/upstream-malware-scan@"
+            "8b4fe96708d1e2e64cf535e3726fa7a9a4a1adb6",
+            workflow,
+        )
+
+    def test_exact_pr_head_is_scanned_before_downstream_tests(self):
+        workflow = (
+            ROOT / ".github/workflows/mwodevelop-watchnixtoons2.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("test:\n    needs: malware-scan", workflow)
+        self.assertIn("git archive HEAD -- mwodevelop tools", workflow)
+        self.assertIn(
+            "Scan exact head before executing addon code",
+            workflow,
+        )
+        self.assertIn("baseline: .github/security-baseline.json", workflow)
+
+    def test_security_baseline_is_bound_to_current_reviewed_bytes(self):
+        baseline = json.loads(
+            (ROOT / ".github/security-baseline.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(baseline["schema"], 1)
+        for item in baseline["findings"]:
+            relative = item["path"].removeprefix("tree/")
+            digest = hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
+            self.assertEqual(digest, item["sha256"])
 
 
 if __name__ == "__main__":

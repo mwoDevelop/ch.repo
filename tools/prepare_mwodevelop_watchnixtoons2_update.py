@@ -350,22 +350,6 @@ def prepare(discovery, output, root=ROOT):
             shutil.rmtree(target)
             shutil.copytree(generated, target)
             shutil.copyfile(manifest, worktree / "mwodevelop/import-manifest.json")
-            _run(
-                "python3",
-                "tools/import_mwodevelop_watchnixtoons2.py",
-                "--check",
-                cwd=worktree,
-            )
-            _run(
-                "python3",
-                "-m",
-                "unittest",
-                "discover",
-                "-s",
-                "mwodevelop/tests",
-                "-v",
-                cwd=worktree,
-            )
 
             candidate_tree = temporary / "candidate-tree"
             candidate_tree.mkdir()
@@ -395,6 +379,7 @@ def prepare(discovery, output, root=ROOT):
                     "managed_files": list(MANAGED_FILES),
                 },
             )
+            (Path(output) / "upstream-archive.zip").write_bytes(archive_payload)
         finally:
             _run(
                 "git",
@@ -402,6 +387,44 @@ def prepare(discovery, output, root=ROOT):
                 "remove",
                 "--force",
                 str(worktree),
+                cwd=root,
+                check=False,
+            )
+    return document
+
+
+def test_bundle(bundle, root=ROOT):
+    """Execute candidate-dependent checks only after the scanner gate."""
+    document = verify_bundle(bundle)
+    base = document["metadata"]["base_commit"]
+    with tempfile.TemporaryDirectory(prefix="watch-candidate-test-") as temporary:
+        checkout = Path(temporary) / "checkout"
+        _run("git", "worktree", "add", "--detach", str(checkout), base, cwd=root)
+        try:
+            apply_bundle(bundle, checkout)
+            _run(
+                "python3",
+                "tools/import_mwodevelop_watchnixtoons2.py",
+                "--check",
+                cwd=checkout,
+            )
+            _run(
+                "python3",
+                "-m",
+                "unittest",
+                "discover",
+                "-s",
+                "mwodevelop/tests",
+                "-v",
+                cwd=checkout,
+            )
+        finally:
+            _run(
+                "git",
+                "worktree",
+                "remove",
+                "--force",
+                str(checkout),
                 cwd=root,
                 check=False,
             )
@@ -424,6 +447,13 @@ def verify_bundle(bundle):
     if _inventory(bundle / "tree") != document.get("files"):
         raise ValueError("candidate tree inventory mismatch")
     metadata = document["metadata"]
+    upstream_digest = metadata.get("upstream", {}).get("archive_sha256")
+    if upstream_digest:
+        archive = bundle / "upstream-archive.zip"
+        if not archive.is_file() or archive.is_symlink():
+            raise ValueError("raw upstream archive is missing")
+        if _sha256(archive.read_bytes()) != upstream_digest:
+            raise ValueError("raw upstream archive digest mismatch")
     allowed_files = set(metadata["managed_files"])
     addon = metadata["managed_addon"].rstrip("/")
     for relative in document["files"]:
@@ -460,6 +490,8 @@ def main():
     prepare_parser = subparsers.add_parser("prepare")
     prepare_parser.add_argument("--discovery", required=True)
     prepare_parser.add_argument("--output", required=True)
+    test_parser = subparsers.add_parser("test")
+    test_parser.add_argument("--bundle", required=True)
     verify_parser = subparsers.add_parser("verify")
     verify_parser.add_argument("--bundle", required=True)
     apply_parser = subparsers.add_parser("apply")
@@ -475,6 +507,8 @@ def main():
             json.loads(Path(args.discovery).read_text(encoding="utf-8")),
             args.output,
         )
+    elif args.command == "test":
+        result = test_bundle(args.bundle)
     elif args.command == "verify":
         result = verify_bundle(args.bundle)
     else:

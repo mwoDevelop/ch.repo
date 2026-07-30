@@ -51,7 +51,7 @@ jobs:
               ).strip())
               output.write("upstream_version=%s\n" % discovery["observed"]["version"])
           PY
-      - name: Prepare and test an isolated candidate
+      - name: Materialize an isolated candidate without executing it
         if: steps.discovery.outputs.action == 'prepare'
         run: >-
           python3 tools/prepare_mwodevelop_watchnixtoons2_update.py prepare
@@ -77,12 +77,33 @@ jobs:
                   "expected_tree=%s\n" % candidate["metadata"]["expected_tree"]
               )
           PY
+      - name: Scan exact candidate before executing tests
+        if: steps.discovery.outputs.action == 'prepare'
+        uses: mwoDevelop/kodi/.github/actions/upstream-malware-scan@8b4fe96708d1e2e64cf535e3726fa7a9a4a1adb6
+        with:
+          baseline: .github/security-baseline.json
+          candidate-path: candidate
+          candidate-id: ${{ steps.candidate.outputs.candidate_id }}
+          output: security-report.json
+      - name: Test the scanned content-addressed candidate
+        if: steps.discovery.outputs.action == 'prepare'
+        run: >-
+          python3 tools/prepare_mwodevelop_watchnixtoons2_update.py test
+          --bundle candidate
       - name: Upload the content-addressed candidate
         if: steps.discovery.outputs.action == 'prepare'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: watchnixtoons2-candidate
           path: candidate/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload scanner attestation
+        if: steps.discovery.outputs.action == 'prepare'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: watchnixtoons2-security
+          path: security-report.json
           if-no-files-found: error
           retention-days: 7
 
@@ -103,6 +124,28 @@ jobs:
         with:
           name: watchnixtoons2-candidate
           path: candidate
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: watchnixtoons2-security
+          path: security
+      - name: Verify scanner attestation against downloaded bytes
+        env:
+          CANDIDATE_ID: ${{ needs.prepare.outputs.candidate_id }}
+          SECURITY_CONTROL_SHA: 8b4fe96708d1e2e64cf535e3726fa7a9a4a1adb6
+        run: |
+          set -euo pipefail
+          control="$RUNNER_TEMP/mwodevelop-security-control"
+          git init "$control"
+          git -C "$control" remote add origin https://github.com/mwoDevelop/kodi.git
+          git -C "$control" fetch --depth 1 origin "$SECURITY_CONTROL_SHA"
+          test "$(git -C "$control" rev-parse FETCH_HEAD)" = "$SECURITY_CONTROL_SHA"
+          git -C "$control" checkout --detach FETCH_HEAD
+          python "$control/tools/upstream_security_scan.py" verify \
+            --baseline .github/security-baseline.json \
+            --candidate candidate \
+            --candidate-id "$CANDIDATE_ID" \
+            --report security/security-report.json \
+            --policy "$control/manifests/upstream-security.json"
       - name: Verify and apply without executing candidate code
         run: >-
           python3 tools/prepare_mwodevelop_watchnixtoons2_update.py apply
