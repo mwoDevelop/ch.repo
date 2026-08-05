@@ -7,8 +7,8 @@
     },
     "addon.xml": {
       "kind": "transform",
-      "sha256": "e7cd94d75b26b6f4006ec1eb22621a58fed63a9632e812da73fa01febabc9c5c",
-      "size": 5245
+      "sha256": "47018340f3928ec71a0c63d1fc29416f06f4f2f8b84d0381b6f1a75b66a7e217",
+      "size": 5529
     },
     "default.py": {
       "kind": "upstream",
@@ -77,33 +77,33 @@
     },
     "lib/sites/wcoflix.py": {
       "kind": "upstream",
-      "sha256": "ea8ed9276da6b20c5682fdf5f1b78ab2378e2061e1812dff500ffe233b70bdbb",
-      "size": 2277
+      "sha256": "75c4c1d41c47720a39160a8ea8aa1a821300d39758eceec4544a231842b56ecc",
+      "size": 2295
     },
     "lib/sites/wcoforever.py": {
       "kind": "transform",
-      "sha256": "e9bae18ca069d519c83ce60477aa2c81919a44e0165588c74a8ea5b46b232f09",
-      "size": 2287
+      "sha256": "f76e2154ca36a8558e1977cc4699f9e7795c31d730a466b2f7ee243dd4f4f3b3",
+      "size": 2305
     },
     "lib/sites/wcostream.py": {
       "kind": "upstream",
-      "sha256": "bc838575eb73400afbd566f4e53d337a10e5099a80488c106a9fff8b1e86edd1",
-      "size": 3619
+      "sha256": "73285aba6a0b1608a0a534d1d210e13df3cff31dde1bdf83816c95f35dc4433d",
+      "size": 3629
     },
     "resources/data/thumbnail/cartoon-list.json": {
       "kind": "upstream",
-      "sha256": "1128cd71cf3ecc5e2f605608881bc812ca3a925f38adc62b8734711fe8903ea5",
-      "size": 146283
+      "sha256": "18678faf639c167a10a9f9c3a42bc3093a1a430b44dea7bfcc788dee67990452",
+      "size": 146421
     },
     "resources/data/thumbnail/dubbed-anime-list.json": {
       "kind": "upstream",
-      "sha256": "379513b0e4aeef5a986291e0b92ca8bfc23f5db86ee4d662f1fbce18a6e5bed6",
-      "size": 108885
+      "sha256": "36588037789c7e72ff68b8760d7627ca0d4bea4a9d6ffe7f44f6385875eec901",
+      "size": 108977
     },
     "resources/data/thumbnail/movie-list.json": {
       "kind": "upstream",
-      "sha256": "44151c5ef0ee1cfc55c5a0710e6b6ade12ff0cfb928a3c2aa3e2e80d0e1facb3",
-      "size": 225529
+      "sha256": "cb21afc68e71467fc5891ba05602ff4942e7a35c89e15646f041ce375529a5a2",
+      "size": 225988
     },
     "resources/data/thumbnail/ova-list.json": {
       "kind": "upstream",
@@ -112,8 +112,8 @@
     },
     "resources/data/thumbnail/subbed-anime-list.json": {
       "kind": "upstream",
-      "sha256": "7e4cafd79dbcc05f20c89f633f4db8e31cbaa59329f668b86d4dc95dc00d7a54",
-      "size": 193463
+      "sha256": "a445ea5c246614691b84ff536f44bcd4f78d662d6675df56c7ee204e0dabb308",
+      "size": 193739
     },
     "resources/language/resource.language.en_gb/strings.po": {
       "kind": "transform",
@@ -153,10 +153,10 @@
   },
   "schema": 1,
   "upstream": {
-    "archive": "plugin.video.watchnixtoons2.kodi19/plugin.video.watchnixtoons2.kodi19-0.26.zip",
-    "archive_sha256": "eea63a9c55d37f044edf05a8ca485be1ec2814de253eee75c4e2e13cf5f13b43",
-    "commit": "6b3183f56aef4e90ba1f0eb067c88ad2bc69e593",
+    "archive": "plugin.video.watchnixtoons2.kodi19/plugin.video.watchnixtoons2.kodi19-0.27.zip",
+    "archive_sha256": "cb1310593d9f3111290abec1fd7e1806cb1bc667a78db8f3e43cc69aa9a93283",
+    "commit": "8c7fd347b8b6b199706d73200b82f9be2551e6b8",
     "files": 39,
-    "uncompressed_bytes": 2503304
+    "uncompressed_bytes": 2504425
   }
 }
