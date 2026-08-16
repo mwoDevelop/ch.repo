@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.watchnixtoons2.mwodevelop" name="WatchNixtoons2 (mwoDevelop)" version="0.27.1" provider-name="WNT2 contributors, mwoDevelop">
+<addon id="plugin.video.watchnixtoons2.mwodevelop" name="WatchNixtoons2 (mwoDevelop)" version="0.28.1" provider-name="WNT2 contributors, mwoDevelop">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.requests"/>
@@ -28,6 +28,10 @@ This build is maintained in an isolated downstream subtree by mwoDevelop.
         <source>https://github.com/mwoDevelop/ch.repo</source>
         <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
 
+[B]0.28.1[/B]
+- Rebased the isolated mwoDevelop package on upstream 0.28
+- Preserved downstream identity, Python 3 resolver fixes and optional InputStream Adaptive fallback
+
 [B]0.27.1[/B]
 - Rebased the isolated mwoDevelop package on upstream 0.27
 - Preserved downstream identity, Python 3 resolver fixes and optional InputStream Adaptive fallback
@@ -45,6 +49,9 @@ This build is maintained in an isolated downstream subtree by mwoDevelop.
 - Fixed settings actions still targeting the legacy add-on ID
 - Fixed the Python 3 JWPlayer fallback resolver and signed-cookie parsing
 - Added explicit Kodi 19+ Python dependency and source/license metadata
+
+[B]0.28[/B]
+- Updates from lolage331
 
 [B]0.27[/B]
 - Fixed Latest Movies Section thanks to lolage331

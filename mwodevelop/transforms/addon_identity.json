@@ -2,12 +2,12 @@
   "schema": 1,
   "upstream_root": "plugin.video.watchnixtoons2.kodi19",
   "downstream_root": "plugin.video.watchnixtoons2.mwodevelop",
-  "downstream_version": "0.27.1",
+  "downstream_version": "0.28.1",
   "text_replacements": {
     "addon.xml": [
       [
-        "<addon id=\"plugin.video.watchnixtoons2.kodi19\" name=\"WatchNixtoons2\" version=\"0.27\" provider-name=\"WNT2\">",
-        "<addon id=\"plugin.video.watchnixtoons2.mwodevelop\" name=\"WatchNixtoons2 (mwoDevelop)\" version=\"0.27.1\" provider-name=\"WNT2 contributors, mwoDevelop\">"
+        "<addon id=\"plugin.video.watchnixtoons2.kodi19\" name=\"WatchNixtoons2\" version=\"0.28\" provider-name=\"WNT2\">",
+        "<addon id=\"plugin.video.watchnixtoons2.mwodevelop\" name=\"WatchNixtoons2 (mwoDevelop)\" version=\"0.28.1\" provider-name=\"WNT2 contributors, mwoDevelop\">"
       ],
       [
         "    <requires>\n",
@@ -31,7 +31,7 @@
       ],
       [
         "        <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime\n",
-        "        <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime\n\n[B]0.27.1[/B]\n- Rebased the isolated mwoDevelop package on upstream 0.27\n- Preserved downstream identity, Python 3 resolver fixes and optional InputStream Adaptive fallback\n\n[B]0.26.1[/B]\n- Rebased the isolated mwoDevelop package on upstream 0.26\n- Preserved downstream identity, Python 3 resolver fixes and optional InputStream Adaptive fallback\n\n[B]0.25.2[/B]\n- Do not block installation when a compatible InputStream Adaptive binary is unavailable\n- Fall back to Kodi's native HLS player when InputStream Adaptive is not installed\n\n[B]0.25.1[/B]\n- Isolated mwoDevelop package with its own add-on ID\n- Fixed settings actions still targeting the legacy add-on ID\n- Fixed the Python 3 JWPlayer fallback resolver and signed-cookie parsing\n- Added explicit Kodi 19+ Python dependency and source/license metadata\n"
+        "        <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime\n\n[B]0.28.1[/B]\n- Rebased the isolated mwoDevelop package on upstream 0.28\n- Preserved downstream identity, Python 3 resolver fixes and optional InputStream Adaptive fallback\n\n[B]0.27.1[/B]\n- Rebased the isolated mwoDevelop package on upstream 0.27\n- Preserved downstream identity, Python 3 resolver fixes and optional InputStream Adaptive fallback\n\n[B]0.26.1[/B]\n- Rebased the isolated mwoDevelop package on upstream 0.26\n- Preserved downstream identity, Python 3 resolver fixes and optional InputStream Adaptive fallback\n\n[B]0.25.2[/B]\n- Do not block installation when a compatible InputStream Adaptive binary is unavailable\n- Fall back to Kodi's native HLS player when InputStream Adaptive is not installed\n\n[B]0.25.1[/B]\n- Isolated mwoDevelop package with its own add-on ID\n- Fixed settings actions still targeting the legacy add-on ID\n- Fixed the Python 3 JWPlayer fallback resolver and signed-cookie parsing\n- Added explicit Kodi 19+ Python dependency and source/license metadata\n"
       ]
     ],
     "lib/common.py": [

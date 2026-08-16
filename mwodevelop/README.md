@@ -9,7 +9,7 @@ mixing downstream changes into the original packages.
 
 - Repository: `christianhaitian/ch.repo`
 - Package: `plugin.video.watchnixtoons2.kodi19`
-- Imported release: `0.27`
+- Imported release: `0.28`
 - Import metadata and the exact archive digest: `upstream.json`
 
 The runtime source was extracted from the upstream release archive. Original

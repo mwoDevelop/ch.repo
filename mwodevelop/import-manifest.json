@@ -7,8 +7,8 @@
     },
     "addon.xml": {
       "kind": "transform",
-      "sha256": "47018340f3928ec71a0c63d1fc29416f06f4f2f8b84d0381b6f1a75b66a7e217",
-      "size": 5529
+      "sha256": "29d5585825dac702487d84912848cd4732bacac7245328e5d21c1d0ed3af4fb5",
+      "size": 5741
     },
     "default.py": {
       "kind": "upstream",
@@ -153,10 +153,10 @@
   },
   "schema": 1,
   "upstream": {
-    "archive": "plugin.video.watchnixtoons2.kodi19/plugin.video.watchnixtoons2.kodi19-0.27.zip",
-    "archive_sha256": "cb1310593d9f3111290abec1fd7e1806cb1bc667a78db8f3e43cc69aa9a93283",
-    "commit": "8c7fd347b8b6b199706d73200b82f9be2551e6b8",
+    "archive": "plugin.video.watchnixtoons2.kodi19/plugin.video.watchnixtoons2.kodi19-0.28.zip",
+    "archive_sha256": "2535441d920276dbfe76a7736aee26aae4ff5c38f574014aba0bd5e1ab623fdf",
+    "commit": "971b2cf138f2c0d1dbf51c8b1460a0e9cfd292fc",
     "files": 39,
-    "uncompressed_bytes": 2504425
+    "uncompressed_bytes": 2504463
   }
 }
