@@ -38,6 +38,38 @@
       [
         "verify=False, ",
         ""
+      ],
+      [
+        "import ssl\n",
+        ""
+      ],
+      [
+        "# Disable urllib3's \"InsecureRequestWarning: Unverified HTTPS request is being made\" warnings\nfrom requests.packages.urllib3.exceptions import InsecureRequestWarning\nrequests.packages.urllib3.disable_warnings(InsecureRequestWarning)\n\n",
+        ""
+      ],
+      [
+        "from urllib3.poolmanager import PoolManager\nfrom requests.adapters import HTTPAdapter\n\n\n",
+        ""
+      ],
+      [
+        "class TLS11HttpAdapter(HTTPAdapter):\n\n    \"\"\"Transport adapter\" that allows us to use TLSv1.1\"\"\"\n\n    def init_poolmanager(self, connections, maxsize, block=False):\n        self.poolmanager = PoolManager(\n            num_pools=connections, maxsize=maxsize, block=block, ssl_version=ssl.PROTOCOL_TLSv1_1\n        )\n\n\n",
+        ""
+      ],
+      [
+        "class TLS12HttpAdapter(HTTPAdapter):\n\n    \"\"\"Transport adapter\" that allows us to use TLSv1.2\"\"\"\n\n    def init_poolmanager(self, connections, maxsize, block=False):\n        self.poolmanager = PoolManager(\n            num_pools=connections, maxsize=maxsize, block=block, ssl_version=ssl.PROTOCOL_TLSv1_2\n        )\n\n",
+        ""
+      ],
+      [
+        "tls_adapters = [TLS12HttpAdapter(), TLS11HttpAdapter()]\n",
+        ""
+      ],
+      [
+        "    domain = uri.scheme + '://' + uri.netloc\n\n",
+        ""
+      ],
+      [
+        "            if status == 403 and response.headers.get('server', '') == 'cloudflare':\n                rqs.mount(domain, tls_adapters[i])\n",
+        ""
       ]
     ],
     "lib/plugin.py": [
