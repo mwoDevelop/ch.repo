@@ -27,7 +27,26 @@ else:
     from lib.sites.wcostream import *
 
 # language
-__language__ = ADDON.getLocalizedString
+LANGUAGE_FALLBACKS = {
+    30050: 'Latest Releases',
+    30051: 'Latest Movies',
+    30052: 'Popular & Ongoing Series',
+    30053: 'Dubbed Anime',
+    30054: 'Cartoons',
+    30055: 'Subbed Anime',
+    30056: 'OVA Series',
+    30057: 'Recently Watched',
+    30100: 'Search Cartoon/Anime Name',
+    30101: 'Search Movie Name',
+    30102: 'Search Episode Name',
+    30103: 'Search by Genre',
+    30104: 'Search by Trakt List',
+    30105: 'Search History...',
+}
+
+
+def __language__(string_id):
+    return ADDON.getLocalizedString(string_id) or LANGUAGE_FALLBACKS.get(string_id, '')
 
 def actionMenu(params):
 

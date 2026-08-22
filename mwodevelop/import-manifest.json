@@ -62,8 +62,8 @@
     },
     "lib/plugin.py": {
       "kind": "patch",
-      "sha256": "49f17293552e4e8a3a3071cc07ba5c89ab695e390fa086bc6a4c80237a2d3caf",
-      "size": 69583
+      "sha256": "eb961d1bcda8d50ab115326bbad350a0120b7f77d053328265d1f2251f003345",
+      "size": 70120
     },
     "lib/recently_watched.py": {
       "kind": "upstream",

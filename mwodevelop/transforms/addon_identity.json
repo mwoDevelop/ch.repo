@@ -76,6 +76,10 @@
       [
         "verify=False, ",
         ""
+      ],
+      [
+        "__language__ = ADDON.getLocalizedString\n",
+        "LANGUAGE_FALLBACKS = {\n    30050: 'Latest Releases',\n    30051: 'Latest Movies',\n    30052: 'Popular & Ongoing Series',\n    30053: 'Dubbed Anime',\n    30054: 'Cartoons',\n    30055: 'Subbed Anime',\n    30056: 'OVA Series',\n    30057: 'Recently Watched',\n    30100: 'Search Cartoon/Anime Name',\n    30101: 'Search Movie Name',\n    30102: 'Search Episode Name',\n    30103: 'Search by Genre',\n    30104: 'Search by Trakt List',\n    30105: 'Search History...',\n}\n\n\ndef __language__(string_id):\n    return ADDON.getLocalizedString(string_id) or LANGUAGE_FALLBACKS.get(string_id, '')\n"
       ]
     ],
     "lib/common.py": [
