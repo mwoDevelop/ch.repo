@@ -1,11 +1,11 @@
 {
   "schema": 1,
   "repository": "https://github.com/christianhaitian/ch.repo",
-  "commit": "8c7fd347b8b6b199706d73200b82f9be2551e6b8",
+  "commit": "c95f6795da2c06a5c7989025f21bc690e1f6f4bd",
   "addon_id": "plugin.video.watchnixtoons2.kodi19",
-  "version": "0.27",
-  "archive": "plugin.video.watchnixtoons2.kodi19/plugin.video.watchnixtoons2.kodi19-0.27.zip",
-  "archive_sha256": "cb1310593d9f3111290abec1fd7e1806cb1bc667a78db8f3e43cc69aa9a93283",
+  "version": "0.29",
+  "archive": "plugin.video.watchnixtoons2.kodi19/plugin.video.watchnixtoons2.kodi19-0.29.zip",
+  "archive_sha256": "0d1a536d064473a4ff84209d7dcc7ba45a9c6bb316809840c75b3e3607d7e5b4",
   "license": "GPL-3.0-only",
   "license_source": "LICENSE"
 }

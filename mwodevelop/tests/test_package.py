@@ -89,6 +89,20 @@ class PackageTests(unittest.TestCase):
             plugin_source,
         )
 
+    def test_https_requests_keep_certificate_verification_enabled(self):
+        network_source = (ADDON / "lib/network.py").read_text(encoding="utf-8")
+        plugin_source = (ADDON / "lib/plugin.py").read_text(encoding="utf-8")
+        self.assertNotIn("verify=False", network_source)
+        self.assertNotIn("verify=False", plugin_source)
+        self.assertNotIn("disable_warnings", network_source)
+        self.assertNotIn("PROTOCOL_TLSv1_1", network_source)
+
+    def test_menu_labels_have_runtime_fallbacks(self):
+        plugin_source = (ADDON / "lib/plugin.py").read_text(encoding="utf-8")
+        self.assertIn("LANGUAGE_FALLBACKS", plugin_source)
+        self.assertIn("30050: 'Latest Releases'", plugin_source)
+        self.assertIn("ADDON.getLocalizedString(string_id) or", plugin_source)
+
     def test_import_is_reproducible(self):
         import subprocess
         import sys
