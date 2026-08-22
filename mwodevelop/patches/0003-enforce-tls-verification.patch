@@ -1,5 +1,4 @@
 diff --git a/lib/network.py b/lib/network.py
-index 1cea1b5..11a6e95 100644
 --- a/lib/network.py
 +++ b/lib/network.py
 @@ -1,5 +1,4 @@
@@ -53,18 +52,7 @@ index 1cea1b5..11a6e95 100644
      request_times = ADDON.getSetting('requestTimes')
      if request_times:
          request_times = json.loads( request_times )
-@@ -86,17 +55,15 @@ def request_helper(url, data=None, extra_headers=None):
-     while status not in [200, 204] and i < 2:
-         if data:
-             response = rqs.post(
--                url, data=data, headers=my_headers, verify=False, cookies=cookie_dict, timeout=10
-+                url, data=data, headers=my_headers, cookies=cookie_dict, timeout=10
-             )
-         else:
-             response = rqs.get(
--                url, headers=my_headers, verify=False, cookies=cookie_dict, timeout=10
-+                url, headers=my_headers, cookies=cookie_dict, timeout=10
-             )
+@@ -96,8 +65,6 @@ def request_helper(url, data=None, extra_headers=None):
  
          status = response.status_code
          if status not in [200, 204]:
@@ -73,16 +61,3 @@ index 1cea1b5..11a6e95 100644
              i += 1
  
      # Store the session cookie(s), if any.
-diff --git a/lib/plugin.py b/lib/plugin.py
-index 8656d5e..9917884 100644
---- a/lib/plugin.py
-+++ b/lib/plugin.py
-@@ -1759,7 +1759,7 @@ def solve_media_redirect(url, headers):
-     while True:
-         try:
-             media_head = rqs_get().get(
--                url, stream=True, headers=headers, allow_redirects=False, verify=False, timeout=10
-+                url, stream=True, headers=headers, allow_redirects=False, timeout=10
-             )
-             if 'Location' in media_head.headers:
-                 url = media_head.headers['Location'] # Change the URL to the redirected location.

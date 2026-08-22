@@ -34,6 +34,18 @@
         "        <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime\n\n[B]0.27.1[/B]\n- Rebased the isolated mwoDevelop package on upstream 0.27\n- Preserved downstream identity, Python 3 resolver fixes and optional InputStream Adaptive fallback\n\n[B]0.26.1[/B]\n- Rebased the isolated mwoDevelop package on upstream 0.26\n- Preserved downstream identity, Python 3 resolver fixes and optional InputStream Adaptive fallback\n\n[B]0.25.2[/B]\n- Do not block installation when a compatible InputStream Adaptive binary is unavailable\n- Fall back to Kodi's native HLS player when InputStream Adaptive is not installed\n\n[B]0.25.1[/B]\n- Isolated mwoDevelop package with its own add-on ID\n- Fixed settings actions still targeting the legacy add-on ID\n- Fixed the Python 3 JWPlayer fallback resolver and signed-cookie parsing\n- Added explicit Kodi 19+ Python dependency and source/license metadata\n"
       ]
     ],
+    "lib/network.py": [
+      [
+        "verify=False, ",
+        ""
+      ]
+    ],
+    "lib/plugin.py": [
+      [
+        "verify=False, ",
+        ""
+      ]
+    ],
     "lib/common.py": [
       [
         "WatchNixtoons2 >",
