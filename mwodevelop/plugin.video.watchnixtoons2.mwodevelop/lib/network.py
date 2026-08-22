@@ -17,7 +17,7 @@ def rqs_get():
 
     return rqs
 
-def request_helper(url, data=None, extra_headers=None):
+def request_helper(url, data=None, extra_headers=None, timeout=10):
 
     """ makes call to get/post website """
 
@@ -55,11 +55,11 @@ def request_helper(url, data=None, extra_headers=None):
     while status not in [200, 204] and i < 2:
         if data:
             response = rqs.post(
-                url, data=data, headers=my_headers, cookies=cookie_dict, timeout=10
+                url, data=data, headers=my_headers, cookies=cookie_dict, timeout=timeout
             )
         else:
             response = rqs.get(
-                url, headers=my_headers, cookies=cookie_dict, timeout=10
+                url, headers=my_headers, cookies=cookie_dict, timeout=timeout
             )
 
         status = response.status_code
