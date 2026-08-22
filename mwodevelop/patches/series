@@ -1,2 +1,3 @@
 0001-python3-resolver-and-optional-isa.patch
 optional 0002-normalize-upstream-whitespace.patch
+0003-enforce-tls-verification.patch

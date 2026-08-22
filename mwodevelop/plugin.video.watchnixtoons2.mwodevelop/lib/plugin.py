@@ -1759,7 +1759,7 @@ def solve_media_redirect(url, headers):
     while True:
         try:
             media_head = rqs_get().get(
-                url, stream=True, headers=headers, allow_redirects=False, verify=False, timeout=10
+                url, stream=True, headers=headers, allow_redirects=False, timeout=10
             )
             if 'Location' in media_head.headers:
                 url = media_head.headers['Location'] # Change the URL to the redirected location.

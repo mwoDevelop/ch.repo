@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import ssl
 import json
 from time import time, sleep
 
@@ -10,35 +9,7 @@ from six.moves import urllib_parse
 from lib.constants import WNT2_USER_AGENT, BASEURL, PROPERTY_SESSION_COOKIE
 from lib.common import *
 
-# Disable urllib3's "InsecureRequestWarning: Unverified HTTPS request is being made" warnings
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
-from urllib3.poolmanager import PoolManager
-from requests.adapters import HTTPAdapter
-
-
-class TLS11HttpAdapter(HTTPAdapter):
-
-    """Transport adapter" that allows us to use TLSv1.1"""
-
-    def init_poolmanager(self, connections, maxsize, block=False):
-        self.poolmanager = PoolManager(
-            num_pools=connections, maxsize=maxsize, block=block, ssl_version=ssl.PROTOCOL_TLSv1_1
-        )
-
-
-class TLS12HttpAdapter(HTTPAdapter):
-
-    """Transport adapter" that allows us to use TLSv1.2"""
-
-    def init_poolmanager(self, connections, maxsize, block=False):
-        self.poolmanager = PoolManager(
-            num_pools=connections, maxsize=maxsize, block=block, ssl_version=ssl.PROTOCOL_TLSv1_2
-        )
-
 rqs = requests.session()
-tls_adapters = [TLS12HttpAdapter(), TLS11HttpAdapter()]
 
 def rqs_get():
 
@@ -68,8 +39,6 @@ def request_helper(url, data=None, extra_headers=None):
         cookie_dict = None
 
     uri = urllib_parse.urlparse(url)
-    domain = uri.scheme + '://' + uri.netloc
-
     request_times = ADDON.getSetting('requestTimes')
     if request_times:
         request_times = json.loads( request_times )
@@ -86,17 +55,15 @@ def request_helper(url, data=None, extra_headers=None):
     while status not in [200, 204] and i < 2:
         if data:
             response = rqs.post(
-                url, data=data, headers=my_headers, verify=False, cookies=cookie_dict, timeout=10
+                url, data=data, headers=my_headers, cookies=cookie_dict, timeout=10
             )
         else:
             response = rqs.get(
-                url, headers=my_headers, verify=False, cookies=cookie_dict, timeout=10
+                url, headers=my_headers, cookies=cookie_dict, timeout=10
             )
 
         status = response.status_code
         if status not in [200, 204]:
-            if status == 403 and response.headers.get('server', '') == 'cloudflare':
-                rqs.mount(domain, tls_adapters[i])
             i += 1
 
     # Store the session cookie(s), if any.

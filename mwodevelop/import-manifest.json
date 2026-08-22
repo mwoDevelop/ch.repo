@@ -57,13 +57,13 @@
     },
     "lib/network.py": {
       "kind": "patch",
-      "sha256": "9d936292447471cdb3310c076f5b41bc02140c11e4fe99450bafddf62316fcaa",
-      "size": 3463
+      "sha256": "3b9b9d050e0aadd79b5e723d99959e8085c3e908ff14d2f370827f9016a186ac",
+      "size": 2235
     },
     "lib/plugin.py": {
       "kind": "patch",
-      "sha256": "38ff17c3c38fe9bce404253c695065505320afe01b5903d90857ff4baaa5d5c7",
-      "size": 69084
+      "sha256": "33386c95710e133001aefa4bf93d5040219ecb6cdaa89c6cb4142a837f84479e",
+      "size": 69070
     },
     "lib/recently_watched.py": {
       "kind": "upstream",
