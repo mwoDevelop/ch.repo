@@ -63,6 +63,17 @@ class PackageTests(unittest.TestCase):
                 action,
             )
 
+    def test_default_playback_method_is_auto_highest_quality(self):
+        settings = ET.parse(ADDON / "resources/settings.xml").getroot()
+        playback = settings.find("./category/setting[@id='playbackMethod']")
+
+        self.assertIsNotNone(playback)
+        self.assertEqual(playback.attrib["default"], "1")
+        self.assertEqual(
+            playback.attrib["values"].split("|")[1],
+            "Auto Play Highest Quality",
+        )
+
     def test_python_sources_compile(self):
         with tempfile.TemporaryDirectory() as bytecode_dir:
             for source in ADDON.rglob("*.py"):
