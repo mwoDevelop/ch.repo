@@ -7,8 +7,8 @@
     },
     "addon.xml": {
       "kind": "transform",
-      "sha256": "a2563e44392186db15d40b0cf3e68fb80c688521b28a8dbb1c6181460532d00c",
-      "size": 5810
+      "sha256": "3c8b4415c7b1f4232b805a776c692ca4950a48002f31f3df7b92d27733747243",
+      "size": 5888
     },
     "default.py": {
       "kind": "upstream",
@@ -127,7 +127,7 @@
     },
     "resources/settings.xml": {
       "kind": "transform",
-      "sha256": "16987a3c5348bfc4ee2d275b16775178bc99baa09594c493ca5bc455ec81694a",
+      "sha256": "7aeeb83c659505e48171f1732a9faa28604fda8c5a1d9a206cd312d133ecb962",
       "size": 2790
     },
     "screenshot1.jpg": {

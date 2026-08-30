@@ -2,7 +2,7 @@
 <settings>
     <category label="14206">
         <setting type="lsep" label="14086"/>
-        <setting id="playbackMethod" label="30000" type="enum" default="0" values="Select Quality Via Dialog|Auto Play Highest Quality|Auto Play Lowest Quality"/>
+        <setting id="playbackMethod" label="30000" type="enum" default="1" values="Select Quality Via Dialog|Auto Play Highest Quality|Auto Play Lowest Quality"/>
         <setting type="sep"/>
         <setting type="lsep" label="30001"/>
         <setting id="showCatalog" label="30002" type="bool" default="true"/>
