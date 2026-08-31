@@ -2,12 +2,12 @@
   "schema": 1,
   "upstream_root": "plugin.video.watchnixtoons2.kodi19",
   "downstream_root": "plugin.video.watchnixtoons2.mwodevelop",
-  "downstream_version": "0.30.0",
+  "downstream_version": "0.30.1",
   "text_replacements": {
     "addon.xml": [
       [
         "<addon id=\"plugin.video.watchnixtoons2.kodi19\" name=\"WatchNixtoons2\" version=\"0.29\" provider-name=\"WNT2\">",
-        "<addon id=\"plugin.video.watchnixtoons2.mwodevelop\" name=\"WatchNixtoons2 (mwoDevelop)\" version=\"0.30.0\" provider-name=\"WNT2 contributors, mwoDevelop\">"
+        "<addon id=\"plugin.video.watchnixtoons2.mwodevelop\" name=\"WatchNixtoons2 (mwoDevelop)\" version=\"0.30.1\" provider-name=\"WNT2 contributors, mwoDevelop\">"
       ],
       [
         "    <requires>\n",
@@ -35,7 +35,7 @@
       ],
       [
         "[B]0.29.2[/B]",
-        "[B]0.30.0[/B]\n- Add privacy-bounded playback identity notifications for mwoDevelop Profile Sync\n\n[B]0.29.2[/B]"
+        "[B]0.30.1[/B]\n- Use Kodi-compatible JSON for Profile Sync notifications\n\n[B]0.30.0[/B]\n- Add privacy-bounded playback identity notifications for mwoDevelop Profile Sync\n\n[B]0.29.2[/B]"
       ]
     ],
     "lib/network.py": [
