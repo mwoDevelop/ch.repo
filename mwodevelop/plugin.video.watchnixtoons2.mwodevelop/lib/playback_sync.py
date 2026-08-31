@@ -45,12 +45,25 @@ def _notify(method, page_url, kodi_path):
         "content_key": playback_identity(page_url),
         "kodi_path": kodi_path,
     }
-    encoded = json.dumps(document, sort_keys=True, separators=(",", ":"))
     import xbmc
 
-    xbmc.executebuiltin(
-        "NotifyAll({0},{1},{2})".format(SOURCE_ADDON, method, encoded)
+    request = {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "JSONRPC.NotifyAll",
+        "params": {
+            "sender": SOURCE_ADDON,
+            "message": method,
+            "data": document,
+        },
+    }
+    response = json.loads(
+        xbmc.executeJSONRPC(
+            json.dumps(request, sort_keys=True, separators=(",", ":"))
+        )
     )
+    if response.get("result") != "OK":
+        raise ValueError("Profile Sync notification was rejected")
     return document
 
 
