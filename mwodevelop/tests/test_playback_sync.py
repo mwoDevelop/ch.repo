@@ -43,7 +43,9 @@ class PlaybackSyncTests(unittest.TestCase):
         calls = []
         previous = sys.modules.get("xbmc")
         sys.modules["xbmc"] = types.SimpleNamespace(
-            executebuiltin=lambda value: calls.append(value)
+            executeJSONRPC=lambda value: (
+                calls.append(json.loads(value)) or '{"result":"OK"}'
+            )
         )
         try:
             page = "/my-little-pony-episode-2"
@@ -60,10 +62,29 @@ class PlaybackSyncTests(unittest.TestCase):
                 sys.modules["xbmc"] = previous
 
         self.assertEqual(len(calls), 2)
-        self.assertIn(",playback-identity-v1,", calls[0])
-        self.assertIn(",playback-register-v1,", calls[1])
+        self.assertEqual(calls[0]["method"], "JSONRPC.NotifyAll")
+        self.assertEqual(calls[0]["params"]["message"], "playback-identity-v1")
+        self.assertEqual(calls[1]["params"]["message"], "playback-register-v1")
         for call in calls:
-            payload = call.split(",", 2)[2][:-1]
-            document = json.loads(payload)
+            document = call["params"]["data"]
+            self.assertEqual(call["params"]["sender"], playback_sync.SOURCE_ADDON)
             self.assertEqual(document["namespace"], playback_sync.NAMESPACE)
             self.assertEqual(document["kodi_path"], path)
+
+    def test_notification_rejection_is_fail_closed(self):
+        previous = sys.modules.get("xbmc")
+        sys.modules["xbmc"] = types.SimpleNamespace(
+            executeJSONRPC=lambda _value: '{"error":{"code":-32601}}'
+        )
+        try:
+            with self.assertRaises(ValueError):
+                playback_sync.notify_profile_identity(
+                    "/my-little-pony-episode-2",
+                    "plugin://plugin.video.watchnixtoons2.mwodevelop/"
+                    "?action=actionResolve&url=%2Fmy-little-pony-episode-2",
+                )
+        finally:
+            if previous is None:
+                sys.modules.pop("xbmc", None)
+            else:
+                sys.modules["xbmc"] = previous
