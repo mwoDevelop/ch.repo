@@ -1,6 +1,8 @@
 import importlib.util
 import json
+import sqlite3
 import sys
+import tempfile
 import types
 import unittest
 from pathlib import Path
@@ -18,6 +20,65 @@ SPEC.loader.exec_module(playback_sync)
 
 
 class PlaybackSyncTests(unittest.TestCase):
+    def test_cached_record_decorates_never_played_list_item(self):
+        with tempfile.TemporaryDirectory() as directory:
+            database_path = Path(directory) / "playback-state.sqlite"
+            page = "/my-little-pony-episode-2"
+            record = {
+                "namespace": playback_sync.NAMESPACE,
+                "content_key": playback_sync.playback_identity(page),
+                "state": "in_progress",
+                "playcount": 0,
+                "resume_seconds": 11,
+                "duration_seconds": 1327,
+                "lastplayed_utc": "2026-08-31T12:00:00Z",
+                "server_revision": 1,
+            }
+            with sqlite3.connect(database_path) as database:
+                database.execute(
+                    "CREATE TABLE records(namespace TEXT, content_key TEXT, document TEXT)"
+                )
+                database.execute(
+                    "INSERT INTO records VALUES (?, ?, ?)",
+                    (
+                        playback_sync.NAMESPACE,
+                        record["content_key"],
+                        json.dumps(record),
+                    ),
+                )
+
+            class Tag:
+                def __init__(self):
+                    self.playcount = None
+                    self.resume = None
+
+                def setPlaycount(self, value):
+                    self.playcount = value
+
+                def setResumePoint(self, position, total):
+                    self.resume = (position, total)
+
+            class Item:
+                def __init__(self):
+                    self.tag = Tag()
+                    self.properties = {}
+
+                def getVideoInfoTag(self):
+                    return self.tag
+
+                def setProperty(self, key, value):
+                    self.properties[key] = value
+
+            item = Item()
+            result = playback_sync.apply_cached_playback(
+                item, page, database_path
+            )
+
+            self.assertEqual(result, record)
+            self.assertEqual(item.tag.playcount, 0)
+            self.assertEqual(item.tag.resume, (11, 1327))
+            self.assertEqual(item.properties["ResumeTime"], "11")
+
     def test_identity_ignores_domain_and_unrelated_query(self):
         first = playback_sync.playback_identity(
             "https://www.wcostream.tv/my-little-pony-episode-2?lang=dub&token=secret"

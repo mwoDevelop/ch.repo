@@ -3,11 +3,14 @@
 
 import hashlib
 import json
+import os
+import sqlite3
 from urllib import parse as urllib_parse
 
 
 NAMESPACE = "watchnixtoons2.playback.v1"
 SOURCE_ADDON = "plugin.video.watchnixtoons2.mwodevelop"
+PROFILE_SYNC_ADDON = "service.mwodevelop.profilesync"
 
 
 def playback_identity(page_url):
@@ -75,3 +78,91 @@ def notify_profile_identity(page_url, kodi_path):
 def notify_profile_sync(page_url, kodi_path):
     """Register the item selected for playback and arm progress sampling."""
     return _notify("playback-register-v1", page_url, kodi_path)
+
+
+def cached_playback_state(page_url, database_path=None):
+    """Read one redacted LWW record from Profile Sync's local cache."""
+
+    if database_path is None:
+        import xbmcvfs
+
+        database_path = xbmcvfs.translatePath(
+            "special://profile/addon_data/"
+            + PROFILE_SYNC_ADDON
+            + "/playback-state.sqlite"
+        )
+    database_path = str(database_path)
+    if not os.path.isfile(database_path):
+        return None
+    uri = "file:%s?mode=ro" % urllib_parse.quote(database_path, safe="/")
+    database = sqlite3.connect(uri, uri=True, timeout=0.2)
+    try:
+        row = database.execute(
+            """
+            SELECT document FROM records
+            WHERE namespace=? AND content_key=?
+            """,
+            (NAMESPACE, playback_identity(page_url)),
+        ).fetchone()
+    except sqlite3.Error:
+        return None
+    finally:
+        database.close()
+    if row is None:
+        return None
+    try:
+        record = json.loads(row[0])
+    except (TypeError, ValueError):
+        return None
+    required = {
+        "namespace",
+        "content_key",
+        "state",
+        "playcount",
+        "resume_seconds",
+        "duration_seconds",
+        "lastplayed_utc",
+        "server_revision",
+    }
+    if (
+        not isinstance(record, dict)
+        or set(record) != required
+        or record.get("namespace") != NAMESPACE
+        or record.get("content_key") != playback_identity(page_url)
+        or record.get("state") not in {"unwatched", "in_progress", "watched"}
+        or any(
+            not isinstance(record.get(key), int)
+            or isinstance(record.get(key), bool)
+            or record.get(key) < 0
+            for key in (
+                "playcount",
+                "resume_seconds",
+                "duration_seconds",
+                "server_revision",
+            )
+        )
+    ):
+        return None
+    return record
+
+
+def apply_cached_playback(item, page_url, database_path=None):
+    """Decorate a WNT2 ListItem with the latest whole cached record."""
+
+    record = cached_playback_state(page_url, database_path)
+    if record is None:
+        return None
+    playcount = record["playcount"]
+    resume = record["resume_seconds"]
+    duration = record["duration_seconds"]
+    tag = item.getVideoInfoTag() if hasattr(item, "getVideoInfoTag") else None
+    if tag is not None and hasattr(tag, "setPlaycount"):
+        tag.setPlaycount(playcount)
+        if hasattr(tag, "setResumePoint") and duration > 0:
+            tag.setResumePoint(resume, duration)
+    elif hasattr(item, "setInfo"):
+        item.setInfo("video", {"playcount": playcount})
+    if hasattr(item, "setProperty"):
+        item.setProperty("ResumeTime", str(resume))
+        item.setProperty("TotalTime", str(duration))
+    return record
