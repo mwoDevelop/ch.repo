@@ -7,8 +7,8 @@
     },
     "addon.xml": {
       "kind": "transform",
-      "sha256": "4be64c599902a7e628abf715ad4663c0c3dad7ff6b0e04b4de909009448a52b4",
-      "size": 5985
+      "sha256": "d094deb10930b038b42271fbf773b24a420007e3f1dae43bffd576424b8cd092",
+      "size": 6058
     },
     "default.py": {
       "kind": "upstream",
@@ -62,8 +62,8 @@
     },
     "lib/playback_sync.py": {
       "kind": "overlay",
-      "sha256": "bf2de33a2b67754405afa3c32098789fecd4d6d9350e73270d3fc9bcb169b159",
-      "size": 2211
+      "sha256": "5cf9d3738efb34fb5658dd9fccd9e8bdddf88071f58c52580733634b4b5ab699",
+      "size": 2091
     },
     "lib/plugin.py": {
       "kind": "patch",

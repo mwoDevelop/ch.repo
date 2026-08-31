@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import sys
 import types
 import unittest
@@ -61,3 +62,8 @@ class PlaybackSyncTests(unittest.TestCase):
         self.assertEqual(len(calls), 2)
         self.assertIn(",playback-identity-v1,", calls[0])
         self.assertIn(",playback-register-v1,", calls[1])
+        for call in calls:
+            payload = call.split(",", 2)[2][:-1]
+            document = json.loads(payload)
+            self.assertEqual(document["namespace"], playback_sync.NAMESPACE)
+            self.assertEqual(document["kodi_path"], path)

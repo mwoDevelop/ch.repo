@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Privacy-bounded playback identity notification for Profile Sync."""
 
-import base64
 import hashlib
 import json
 from urllib import parse as urllib_parse
@@ -46,11 +45,7 @@ def _notify(method, page_url, kodi_path):
         "content_key": playback_identity(page_url),
         "kodi_path": kodi_path,
     }
-    encoded = base64.urlsafe_b64encode(
-        json.dumps(
-            document, sort_keys=True, separators=(",", ":")
-        ).encode("utf-8")
-    ).decode("ascii").rstrip("=")
+    encoded = json.dumps(document, sort_keys=True, separators=(",", ":"))
     import xbmc
 
     xbmc.executebuiltin(
