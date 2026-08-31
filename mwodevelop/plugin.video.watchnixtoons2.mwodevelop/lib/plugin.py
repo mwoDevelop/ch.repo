@@ -16,6 +16,7 @@ from lib.constants import *
 from lib.common import *
 from lib.network import rqs_get, request_helper
 from lib.recently_watched import recently_watched_load, recently_watched_add, recently_watched_remove
+from lib.playback_sync import notify_profile_identity, notify_profile_sync
 
 from lib.integration.trakt_actions import *
 
@@ -396,6 +397,10 @@ def actionEpisodesMenu(params):
             item = listItemFunc(title, url, art_dict, plot, is_folder=False, is_special=False, oldParams=None)
             item_params['url'] = url
             item_url = build_url(item_params)
+            try:
+                notify_profile_identity(url, item_url)
+            except (TypeError, ValueError):
+                xbmc_debug('Profile Sync playback identity rejected')
             playlist.add(item_url, item)
             yield (item_url, item, False)
 
@@ -1700,6 +1705,11 @@ def actionResolve(params):
 
         item_set_info( item, item_info )
 
+
+        try:
+            notify_profile_sync(params['url'], PLUGIN_URL + sys.argv[2])
+        except (KeyError, TypeError, ValueError):
+            xbmc_debug('Profile Sync playback identity rejected')
 
         # xbmc.Player().play(listitem=item)
         # Alternative play method, lets you extend the Player class with your own.
