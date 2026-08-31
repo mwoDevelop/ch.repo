@@ -5,14 +5,15 @@ diff --git a/lib/plugin.py b/lib/plugin.py
  from lib.common import *
  from lib.network import rqs_get, request_helper
  from lib.recently_watched import recently_watched_load, recently_watched_add, recently_watched_remove
-+from lib.playback_sync import notify_profile_identity, notify_profile_sync
++from lib.playback_sync import apply_cached_playback, notify_profile_identity, notify_profile_sync
  
  from lib.integration.trakt_actions import *
  
-@@ -397,4 +398,8 @@ def actionEpisodesMenu(params):
+@@ -397,4 +398,9 @@ def actionEpisodesMenu(params):
              item_params['url'] = url
              item_url = build_url(item_params)
 +            try:
++                apply_cached_playback(item, url)
 +                notify_profile_identity(url, item_url)
 +            except (TypeError, ValueError):
 +                xbmc_debug('Profile Sync playback identity rejected')
