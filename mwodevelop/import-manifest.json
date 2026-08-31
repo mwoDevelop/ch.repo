@@ -62,13 +62,13 @@
     },
     "lib/playback_sync.py": {
       "kind": "overlay",
-      "sha256": "ff75114f5305174156253b3f85a21394ecf069c2e25d040572e6d14f3d567593",
-      "size": 1867
+      "sha256": "bf2de33a2b67754405afa3c32098789fecd4d6d9350e73270d3fc9bcb169b159",
+      "size": 2211
     },
     "lib/plugin.py": {
       "kind": "patch",
-      "sha256": "b7f403bea88e07bb331d0989e930724b87868ce691299961ca4cd014f5d33234",
-      "size": 70373
+      "sha256": "504b162d74a0e98d59fb6fdce1d7db10168f3ef5297d00ba1c3dfa1995c631d1",
+      "size": 70584
     },
     "lib/recently_watched.py": {
       "kind": "upstream",

@@ -34,7 +34,7 @@ def playback_identity(page_url):
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
 
 
-def notify_profile_sync(page_url, kodi_path):
+def _notify(method, page_url, kodi_path):
     if (
         not isinstance(kodi_path, str)
         or not kodi_path.startswith("plugin://" + SOURCE_ADDON + "/")
@@ -54,8 +54,16 @@ def notify_profile_sync(page_url, kodi_path):
     import xbmc
 
     xbmc.executebuiltin(
-        "NotifyAll({0},playback-register-v1,{1})".format(
-            SOURCE_ADDON, encoded
-        )
+        "NotifyAll({0},{1},{2})".format(SOURCE_ADDON, method, encoded)
     )
     return document
+
+
+def notify_profile_identity(page_url, kodi_path):
+    """Register a visible item without treating it as active playback."""
+    return _notify("playback-identity-v1", page_url, kodi_path)
+
+
+def notify_profile_sync(page_url, kodi_path):
+    """Register the item selected for playback and arm progress sampling."""
+    return _notify("playback-register-v1", page_url, kodi_path)

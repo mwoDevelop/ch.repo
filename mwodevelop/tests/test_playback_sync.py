@@ -1,4 +1,6 @@
 import importlib.util
+import sys
+import types
 import unittest
 from pathlib import Path
 
@@ -35,3 +37,27 @@ class PlaybackSyncTests(unittest.TestCase):
         for value in ("", "/", None):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 playback_sync.playback_identity(value)
+
+    def test_visible_item_and_playback_use_distinct_notifications(self):
+        calls = []
+        previous = sys.modules.get("xbmc")
+        sys.modules["xbmc"] = types.SimpleNamespace(
+            executebuiltin=lambda value: calls.append(value)
+        )
+        try:
+            page = "/my-little-pony-episode-2"
+            path = (
+                "plugin://plugin.video.watchnixtoons2.mwodevelop/"
+                "?action=actionResolve&url=%2Fmy-little-pony-episode-2"
+            )
+            playback_sync.notify_profile_identity(page, path)
+            playback_sync.notify_profile_sync(page, path)
+        finally:
+            if previous is None:
+                sys.modules.pop("xbmc", None)
+            else:
+                sys.modules["xbmc"] = previous
+
+        self.assertEqual(len(calls), 2)
+        self.assertIn(",playback-identity-v1,", calls[0])
+        self.assertIn(",playback-register-v1,", calls[1])
